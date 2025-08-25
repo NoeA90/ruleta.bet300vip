@@ -4,48 +4,29 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Lucky Spin – Reclamar</title>
-  <meta name="description" content="Girá la ruleta y reclamá tu premio. Redirección a WhatsApp con un toque." />
   <style>
-    :root{
-      --bg:#0a0f1c;--card:#121a2c;--accent:#22d3ee;--accent-2:#a78bfa;
-      --text:#e6eef8;--muted:#9fb3c8;--good:#34d399;
-    }
+    :root{--bg:#0a0f1c;--card:#121a2c;--accent:#22d3ee;--accent-2:#a78bfa;--text:#e6eef8;--muted:#9fb3c8;--good:#34d399;}
     *{box-sizing:border-box}
     html,body{height:100%}
-    body{
-      margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,sans-serif;
-      background:radial-gradient(1200px 600px at 50% -200px,#13223d 0%,var(--bg) 60%);
-      color:var(--text);-webkit-tap-highlight-color:transparent;
-    }
+    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,sans-serif;background:radial-gradient(1200px 600px at 50% -200px,#13223d 0%,var(--bg) 60%);color:var(--text);-webkit-tap-highlight-color:transparent}
     .wrap{min-height:100dvh;display:grid;grid-template-rows:auto 1fr auto;gap:16px}
-    header{padding:16px clamp(16px,4vw,24px) 0;text-align:center}
-    header h1{margin:6px 0 4px;font-size:clamp(22px,4.8vw,32px);letter-spacing:.3px}
+    header{padding:16px;text-align:center}
+    header h1{margin:6px 0 4px;font-size:clamp(22px,4.8vw,32px)}
     header p{margin:0;color:var(--muted);font-size:clamp(13px,3.2vw,15px)}
 
-    .card{background:linear-gradient(180deg,rgba(255,255,255,.02),rgba(255,255,255,0));
-      border:1px solid rgba(255,255,255,.08);box-shadow:0 10px 30px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.06);
-      border-radius:20px}
+    .card{background:linear-gradient(180deg,rgba(255,255,255,.02),rgba(255,255,255,0));border:1px solid rgba(255,255,255,.08);box-shadow:0 10px 30px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.06);border-radius:0;width:100vw;margin:0;padding:0}
 
-    /* Escenario y ruleta centrados (mobile-first) */
-    .stage{margin:8px auto 0;width:min(92vw,520px);aspect-ratio:1/1;position:relative;display:block;overflow:visible}
+    .stage{margin:0 auto;width:100vw;max-width:520px;aspect-ratio:1/1;position:relative;display:block;overflow:visible}
     .wheel-wrap{position:relative;width:100%;height:100%}
-    .wheel{position:absolute;inset:0;width:100%;height:100%;display:block;filter:drop-shadow(0 12px 24px rgba(0,0,0,.45));
-      transform:rotate(0deg);transform-origin:50% 50%;transition:transform 0s}
-    /* Indicador triangular SIEMPRE centrado arriba */
-    .peg{position:absolute;top:0;left:50%;transform:translate(-50%,-6%);pointer-events:none}
-    .peg::after{content:"";width:0;height:0;border-left:clamp(10px,3vw,14px) solid transparent;
-      border-right:clamp(10px,3vw,14px) solid transparent;border-bottom:clamp(18px,5vw,26px) solid var(--accent);
-      filter:drop-shadow(0 4px 10px rgba(34,211,238,.45))}
+    .wheel{position:absolute;inset:0;margin:auto;width:100%;height:100%;display:block;filter:drop-shadow(0 12px 24px rgba(0,0,0,.45));transform:rotate(0deg);transform-origin:50% 50%;transition:transform 0s}
+    .peg{position:absolute;top:0;left:50%;transform:translate(-50%,-8%);pointer-events:none}
+    .peg::after{content:"";width:0;height:0;border-left:clamp(10px,3vw,14px) solid transparent;border-right:clamp(10px,3vw,14px) solid transparent;border-bottom:clamp(18px,5vw,26px) solid var(--accent);filter:drop-shadow(0 4px 10px rgba(34,211,238,.45))}
 
     .controls{display:grid;gap:12px;padding:14px}
-    .cta{font-weight:700;font-size:clamp(16px,4vw,18px);padding:14px 18px;border-radius:14px;border:0;
-      background:linear-gradient(90deg,var(--accent),var(--accent-2));color:#0b1020;cursor:pointer;
-      box-shadow:0 10px 24px rgba(34,211,238,.25);text-align:center}
-    .cta[disabled]{opacity:.6;cursor:not-allowed}
+    .cta{font-weight:700;font-size:clamp(16px,4vw,18px);padding:14px 18px;border-radius:14px;border:0;background:linear-gradient(90deg,var(--accent),var(--accent-2));color:#0b1020;cursor:pointer;box-shadow:0 10px 24px rgba(34,211,238,.25);text-align:center}
 
     .meta{display:grid;gap:10px;padding:0 14px 14px;color:var(--muted);font-size:clamp(12px,3.6vw,14px)}
-    .won{color:var(--good);font-weight:700;text-align:center;font-size:clamp(18px,5vw,22px);
-      padding:8px 12px;border-radius:12px;background:rgba(52,211,153,.12);border:1px solid rgba(52,211,153,.28)}
+    .won{color:var(--good);font-weight:700;text-align:center;font-size:clamp(18px,5vw,22px);padding:8px 12px;border-radius:12px;background:rgba(52,211,153,.12);border:1px solid rgba(52,211,153,.28)}
 
     .recent{display:grid;gap:6px;margin:0;padding:10px 14px 16px;list-style:none}
     .recent li{display:flex;justify-content:space-between;gap:12px;padding:8px 10px;border-radius:10px;background:rgba(255,255,255,.04)}
@@ -54,10 +35,7 @@
     footer{text-align:center;padding:6px 14px 18px;color:var(--muted);font-size:12px}
     a{color:var(--accent);text-decoration:none}
 
-    @media(min-width:700px){
-      .stage{width:min(78vw,560px)}
-      .controls{grid-template-columns:1fr auto;align-items:center}
-    }
+    @media(max-width:400px){.recent{padding:6px 10px 12px}.cta{padding:12px 14px;font-size:15px}.won{font-size:17px}}
   </style>
 </head>
 <body>
@@ -67,18 +45,14 @@
       <p>Premios reales en ARS; la activación se completa por WhatsApp.</p>
     </header>
 
-    <main class="card" style="margin:0 clamp(12px,5vw,24px);">
+    <main class="card">
       <div class="stage">
         <div class="wheel-wrap">
           <div class="peg" aria-hidden="true"></div>
           <svg class="wheel" viewBox="0 0 1000 1000" aria-label="Ruleta de premios">
             <defs>
-              <linearGradient id="segA" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0%" stop-color="#0ea5e9"/><stop offset="100%" stop-color="#22d3ee"/>
-              </linearGradient>
-              <linearGradient id="segB" x1="1" y1="0" x2="0" y2="1">
-                <stop offset="0%" stop-color="#8b5cf6"/><stop offset="100%" stop-color="#a78bfa"/>
-              </linearGradient>
+              <linearGradient id="segA" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#0ea5e9"/><stop offset="100%" stop-color="#22d3ee"/></linearGradient>
+              <linearGradient id="segB" x1="1" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#8b5cf6"/><stop offset="100%" stop-color="#a78bfa"/></linearGradient>
               <filter id="glow"><feDropShadow dx="0" dy="0" stdDeviation="6" flood-color="#22d3ee" flood-opacity=".45"/></filter>
             </defs>
             <g id="wheel-core">
@@ -106,17 +80,15 @@
     </main>
 
     <footer>
-      <small>⚠️ Los premios requieren activación con una carga mínima. Válido solo para usuarios nuevos o inactivos. &nbsp;|&nbsp; <a href="#" id="terms">Términos</a></small>
+      <small>⚠️ Los premios requieren activación con una carga mínima. Válido solo para usuarios nuevos o inactivos.</small>
     </footer>
   </div>
 
   <script>
-    const WHATSAPP_NUMBER = "+5491168392647"; // editar si corresponde
+    const WHATSAPP_NUMBER = "+5491168392647";
     const PRIZES = [2000,2500,3000,3500,4000,4500,5000,6000,7000,8000,9000,10000];
     const recent = [7000,3500,9000,2500,6000,10000];
-
-    let isSpinning=false, currentRotation=0;
-
+    let isSpinning=false,currentRotation=0;
     const wheel=document.querySelector('.wheel');
     const segmentsGroup=document.getElementById('segments');
     const spinBtn=document.getElementById('spinBtn');
@@ -125,94 +97,21 @@
     const wonAmount=document.getElementById('wonAmount');
     const recentList=document.getElementById('recentList');
 
-    function polarToCartesian(cx,cy,r,angleDeg){
-      const a=(angleDeg-90)*Math.PI/180; return {x:cx+r*Math.cos(a),y:cy+r*Math.sin(a)};
-    }
-    function describeArc(cx,cy,r,startAngle,endAngle){
-      const start=polarToCartesian(cx,cy,r,endAngle);
-      const end=polarToCartesian(cx,cy,r,startAngle);
-      const largeArcFlag=endAngle-startAngle<=180?'0':'1';
-      return ['M',start.x,start.y,'A',r,r,0,largeArcFlag,0,end.x,end.y].join(' ');
-    }
+    function polarToCartesian(cx,cy,r,angleDeg){const a=(angleDeg-90)*Math.PI/180;return{x:cx+r*Math.cos(a),y:cy+r*Math.sin(a)}}
+    function describeArc(cx,cy,r,startAngle,endAngle){const start=polarToCartesian(cx,cy,r,endAngle);const end=polarToCartesian(cx,cy,r,startAngle);const largeArcFlag=endAngle-startAngle<=180?'0':'1';return['M',start.x,start.y,'A',r,r,0,largeArcFlag,0,end.x,end.y].join(' ')}
 
-    function buildSegments(){
-      const n=PRIZES.length, step=360/n; segmentsGroup.innerHTML='';
-      for(let i=0;i<n;i++){
-        const start=i*step, end=start+step;
-        const pathOuter=describeArc(500,500,470,start,end);
-        const pathInner=describeArc(500,500,180,end,start);
-        const seg=document.createElementNS('http://www.w3.org/2000/svg','path');
-        seg.setAttribute('d',`${pathOuter} L ${polarToCartesian(500,500,180,start).x} ${polarToCartesian(500,500,180,start).y} ${pathInner} Z`);
-        seg.setAttribute('fill', i%2===0 ? 'url(#segA)' : 'url(#segB)');
-        seg.setAttribute('opacity','0.95'); seg.setAttribute('stroke','#0b1020'); seg.setAttribute('stroke-width','2');
-        segmentsGroup.appendChild(seg);
+    function buildSegments(){const n=PRIZES.length,step=360/n;segmentsGroup.innerHTML='';for(let i=0;i<n;i++){const start=i*step,end=start+step;const pathOuter=describeArc(500,500,470,start,end);const pathInner=describeArc(500,500,180,end,start);const seg=document.createElementNS('http://www.w3.org/2000/svg','path');seg.setAttribute('d',`${pathOuter} L ${polarToCartesian(500,500,180,start).x} ${polarToCartesian(500,500,180,start).y} ${pathInner} Z`);seg.setAttribute('fill',i%2===0?'url(#segA)':'url(#segB)');seg.setAttribute('opacity','0.95');seg.setAttribute('stroke','#0b1020');seg.setAttribute('stroke-width','2');segmentsGroup.appendChild(seg);const pathId=`arc-${i}`;const tp=document.createElementNS('http://www.w3.org/2000/svg','path');tp.setAttribute('id',pathId);tp.setAttribute('d',describeArc(500,500,325,start+2,end-2));tp.setAttribute('fill','none');segmentsGroup.appendChild(tp);const text=document.createElementNS('http://www.w3.org/2000/svg','text');text.setAttribute('fill','#06101e');text.setAttribute('font-weight','800');text.setAttribute('font-size','42');text.setAttribute('letter-spacing','1.5');const textPath=document.createElementNS('http://www.w3.org/2000/svg','textPath');textPath.setAttributeNS('http://www.w3.org/1999/xlink','xlink:href',`#${pathId}`);textPath.setAttribute('startOffset','50%');textPath.setAttribute('text-anchor','middle');textPath.textContent=`$${PRIZES[i].toLocaleString('es-AR')}`;text.appendChild(textPath);segmentsGroup.appendChild(text)}}
 
-        const pathId=`arc-${i}`;
-        const tp=document.createElementNS('http://www.w3.org/2000/svg','path');
-        tp.setAttribute('id',pathId); tp.setAttribute('d',describeArc(500,500,325,start+2,end-2));
-        tp.setAttribute('fill','none'); segmentsGroup.appendChild(tp);
+    function renderRecent(){recentList.innerHTML=recent.slice(0,6).map((v,idx)=>`<li><span>#${String(idx+1).padStart(2,'0')}</span> <b>$${v.toLocaleString('es-AR')}</b></li>`).join('')}
 
-        const text=document.createElementNS('http://www.w3.org/2000/svg','text');
-        text.setAttribute('fill','#06101e'); text.setAttribute('font-weight','800'); text.setAttribute('font-size','42');
-        text.setAttribute('letter-spacing','1.5');
-        const textPath=document.createElementNS('http://www.w3.org/2000/svg','textPath');
-        textPath.setAttributeNS('http://www.w3.org/1999/xlink','xlink:href',`#${pathId}`);
-        textPath.setAttribute('startOffset','50%'); textPath.setAttribute('text-anchor','middle');
-        textPath.textContent=`$${PRIZES[i].toLocaleString('es-AR')}`;
-        text.appendChild(textPath); segmentsGroup.appendChild(text);
-      }
-    }
+    function buildWhatsAppLink(amount){const msg=encodeURIComponent(`Hola, quiero activar mi premio de $${amount.toLocaleString('es-AR')}.`);return`https://wa.me/${WHATSAPP_NUMBER.replace(/\D/g,'')}?text=${msg}`}
 
-    function renderRecent(){
-      recentList.innerHTML = recent.slice(0,6).map((v,idx)=>`
-        <li><span>#${String(idx+1).padStart(2,'0')}</span> <b>$${v.toLocaleString('es-AR')}</b></li>
-      `).join('');
-    }
+    function pickPrizeByRotation(totalDeg){const n=PRIZES.length,step=360/n;const normalized=(360-(totalDeg%360))%360;const idx=Math.floor(normalized/step)%n;return{index:idx,amount:PRIZES[idx]}}
 
-    function buildWhatsAppLink(amount){
-      const msg=encodeURIComponent(`Hola, quiero activar mi premio de $${amount.toLocaleString('es-AR')}.`);
-      return `https://wa.me/${WHATSAPP_NUMBER.replace(/\\D/g,'')}?text=${msg}`;
-    }
-
-    function pickPrizeByRotation(totalDeg){
-      const n=PRIZES.length, step=360/n;
-      const normalized=(360 - (totalDeg % 360)) % 360;
-      const idx=Math.floor(normalized/step)%n;
-      return {index:idx, amount:PRIZES[idx]};
-    }
-
-    async function spin(){
-      if(isSpinning) return; isSpinning=true;
-      wonMsg.style.display='none'; claimBtn.style.display='none';
-
-      const extraTurns=6+Math.floor(Math.random()*4);
-      const finalOffset=Math.random()*360;
-      const target=currentRotation+extraTurns*360+finalOffset;
-
-      const duration=4200+Math.floor(Math.random()*1000);
-      wheel.style.transition=`transform ${duration}ms cubic-bezier(.2,.9,.2,1)`;
-      wheel.style.transform=`rotate(${target}deg)`;
-
-      await new Promise(res=>setTimeout(res,duration+50));
-      currentRotation=target;
-
-      const {amount}=pickPrizeByRotation(currentRotation);
-      wonAmount.textContent=amount.toLocaleString('es-AR');
-      wonMsg.style.display='block';
-
-      recent.unshift(amount); renderRecent();
-
-      claimBtn.href=buildWhatsAppLink(amount);
-      claimBtn.style.display='inline-block';
-
-      requestAnimationFrame(()=>{ wheel.style.transition='transform 0s'; });
-      isSpinning=false;
-    }
+    async function spin(){if(isSpinning)return;isSpinning=true;wonMsg.style.display='none';claimBtn.style.display='none';const extraTurns=6+Math.floor(Math.random()*4);const finalOffset=Math.random()*360;const target=currentRotation+extraTurns*360+finalOffset;const duration=4200+Math.floor(Math.random()*1000);wheel.style.transition=`transform ${duration}ms cubic-bezier(.2,.9,.2,1)`;wheel.style.transform=`rotate(${target}deg)`;await new Promise(res=>setTimeout(res,duration+50));currentRotation=target;const{amount}=pickPrizeByRotation(currentRotation);wonAmount.textContent=amount.toLocaleString('es-AR');wonMsg.style.display='block';recent.unshift(amount);renderRecent();claimBtn.href=buildWhatsAppLink(amount);claimBtn.style.display='inline-block';requestAnimationFrame(()=>{wheel.style.transition='transform 0s'});isSpinning=false}
 
     spinBtn.addEventListener('click',spin);
-
-    buildSegments();
-    renderRecent();
+    buildSegments();renderRecent();
   </script>
 </body>
 </html>
