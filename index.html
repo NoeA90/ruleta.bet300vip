@@ -1,278 +1,445 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>BET300 | Ruleta de BONUS</title>
-<meta name="description" content="Girá la Ruleta BET300 y reclamá tu bonus extra con la próxima carga.">
-<meta name="theme-color" content="#0b0b12">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Ruleta de Bonus | BET300</title>
+<meta name="theme-color" content="#0b0f1e"/>
+
 <style>
   :root{
-    --bg:#0a0a14; --bg2:#0f132b; --glass:#12142aeb; --stroke:#2a2d66;
-    --neon:#7a5cff; --neon2:#19e6ff; --ok:#16d57a; --text:#edf1ff; --muted:#9ea7d1;
+    --bg:#0b0f1e;
+    --panel:#121634;
+    --panel-2:#0f1330;
+    --border:#1e2150;
+    --text:#e8ebff;
+    --muted:#b7b9d6;
+    --primary:#7c4dff;
+    --primary-2:#00d1ff;
+    --ok:#25D366;
   }
-  *{box-sizing:border-box} html,body{height:100%}
+  *{box-sizing:border-box}
+  html,body{height:100%}
   body{
-    margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Arial;
-    color:var(--text);
+    margin:0; color:var(--text); background: var(--bg);
+    font: 16px/1.35 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,"Helvetica Neue",Arial;
+  }
+
+  /* Fondo con overlay (si no hay imagen, queda el gradiente) */
+  body::before{
+    content:""; position:fixed; inset:0; z-index:-2;
     background:
-      radial-gradient(1100px 700px at 110% -10%, #1a1a44 0%, transparent 60%),
-      radial-gradient(900px 600px at -10% 110%, #0b335a 0%, transparent 60%),
-      linear-gradient(180deg,var(--bg),var(--bg2));
-    overflow-x:hidden; display:flex; align-items:center; justify-content:center;
+      radial-gradient(900px 500px at 50% -10%, rgba(101,74,255,.25), transparent),
+      radial-gradient(700px 350px at 100% 0%, rgba(0,209,255,.18), transparent),
+      linear-gradient(180deg, #0b0f1e 0%, #0b0f1e 60%, #0a0d20 100%);
   }
-  .wrap{width:100%; max-width:980px; padding:18px}
+  .bg-img{
+    position:fixed; inset:0; z-index:-3; opacity:.25; object-fit:cover; width:100%; height:100%;
+    filter: saturate(1.1) contrast(1.05) blur(0px);
+    display:none; /* ponla en block cuando subas fondo */
+  }
+
+  .container{
+    max-width:980px; margin:0 auto; padding:18px 14px 28px;
+  }
   .card{
-    background:var(--glass); border:1px solid var(--stroke); border-radius:20px; padding:18px;
-    box-shadow:0 0 0 2px rgba(122,92,255,.12) inset, 0 28px 60px rgba(0,0,0,.45), 0 0 38px #6c57ff26;
-    backdrop-filter: blur(8px);
+    background: radial-gradient(120% 100% at 50% 0%, rgba(124,77,255,.08), rgba(0,0,0,0)) , var(--panel-2);
+    border:1px solid var(--border);
+    border-radius:18px; padding:18px; box-shadow: 0 15px 40px rgba(0,0,0,.35);
   }
-  header{display:flex; align-items:center; justify-content:space-between; gap:12px; padding:6px 6px 14px; border-bottom:1px solid rgba(255,255,255,.06)}
-  .brand{display:flex; align-items:center; gap:12px}
-  .logo{width:42px;height:42px;border-radius:10px;background:
-    radial-gradient(circle at 30% 30%, var(--neon2), #6cf 60%, transparent 61%),
-    radial-gradient(circle at 70% 70%, var(--neon), #7453ff 60%, transparent 61%);
-    box-shadow:0 0 14px var(--neon2), 0 0 18px #7a5cff88}
-  .brand h1{margin:0;font-size:20px;letter-spacing:.4px}
-  .brand small{display:block;color:var(--muted);margin-top:2px}
-  .pill{display:inline-flex;align-items:center;gap:8px;padding:6px 10px;border-radius:999px;background:
-    linear-gradient(90deg, rgba(122,92,255,.2), rgba(25,230,255,.2));
-    border:1px solid rgba(122,92,255,.35);color:var(--muted);font-size:12px}
-  .grid{display:grid;gap:16px;margin-top:12px;grid-template-columns:1.15fr .9fr}
-  @media (max-width:980px){.grid{grid-template-columns:1fr}}
-  .stage{
-    position:relative;background:linear-gradient(180deg,#0d1030,#0d1030) padding-box,
-    linear-gradient(130deg,#31366d,#161b48) border-box;border:1px solid transparent;border-radius:18px;
-    padding:16px;display:flex;align-items:center;justify-content:center
+  .card + .card{ margin-top:14px }
+  .head{
+    display:flex; align-items:center; gap:10px; margin-bottom:6px;
   }
-  .pin{position:absolute;top:10px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:14px solid transparent;border-right:14px solid transparent;border-top:22px solid var(--neon2);filter:drop-shadow(0 0 8px var(--neon2)) drop-shadow(0 0 14px #00e7ff88)}
-  canvas{width:100%;height:auto;max-width:560px}
-  .side{background:linear-gradient(180deg,#0d1030,#0d1030) padding-box,linear-gradient(130deg,#31366d,#161b48) border-box;border:1px solid transparent;border-radius:18px;padding:16px;display:flex;flex-direction:column;gap:12px}
-  .result{min-height:126px;border:1px dashed #3a3f79;border-radius:12px;display:flex;align-items:center;justify-content:center;text-align:center;padding:14px;background:#0c103088}
-  .result h2{margin:0;font-size:22px}
-  .result small{display:block;color:var(--muted);margin-top:4px}
-  .badge{display:inline-grid;place-items:center;width:64px;height:64px;border-radius:50%;
-    background:radial-gradient(circle at 30% 30%, #22ffd3, #7a5cff 70%);color:#0b0b12;font-weight:900;font-size:18px;margin:0 auto 10px;box-shadow:0 0 16px rgba(25,230,255,.35)}
-  .btns{display:flex;flex-wrap:wrap;gap:10px}
-  .btn{appearance:none;border:none;cursor:pointer;padding:14px 16px;border-radius:12px;font-weight:800;letter-spacing:.2px;font-size:16px;transition:transform .06s ease, opacity .2s ease, box-shadow .2s ease}
-  .btn:active{transform:translateY(1px)}
-  .btn-primary{color:#0b0b12;background:linear-gradient(90deg,#7a5cff 0%,#19e6ff 100%);box-shadow:0 8px 26px rgba(122,92,255,.35), inset 0 0 0 1px rgba(255,255,255,.12)}
-  .btn-primary[disabled]{opacity:.6;cursor:not-allowed;filter:grayscale(.2)}
-  .btn-whats{color:#062b17;background:linear-gradient(180deg,#19d27c,#13b461);box-shadow:0 8px 24px #1adc7f44, inset 0 0 0 1px rgba(255,255,255,.08);display:inline-flex;align-items:center;gap:10px}
-  .btn-ghost{color:#cbd3ff;background:#161943;border:1px solid #2c3265}
-  .meta{font-size:14px;color:#cfd4ff;text-align:center;margin-top:6px}
-  .stock{font-size:12px;color:#9ea7d1;text-align:center;margin-top:4px}
-  .foot{margin-top:12px;text-align:center;color:var(--muted);font-size:12px}
-  .foot b{color:#dfe4ff}
-  .toast{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);background:#12122a;border:1px solid #2c2d5e;color:#cfd4ff;padding:10px 14px;border-radius:10px;font-size:14px;box-shadow:0 8px 30px rgba(0,0,0,.45);opacity:0;pointer-events:none;transition:opacity .25s ease}
-  .toast.show{opacity:1}
-  @media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
+  .brand{ height:28px; width:auto; filter: drop-shadow(0 2px 8px rgba(0,0,0,.4)); }
+  .pill{
+    background: linear-gradient(90deg, rgba(124,77,255,.15), rgba(0,209,255,.15));
+    border:1px solid var(--border); border-radius:999px; padding:6px 10px;
+    font-size:12px; color:var(--muted)
+  }
+
+  .grid{
+    display:grid; gap:16px;
+    grid-template-columns: minmax(0,1fr);
+  }
+  @media (min-width:900px){
+    .grid{ grid-template-columns: 1.15fr .85fr }
+  }
+
+  /* Escenario de la ruleta */
+  .stage{ position:relative; display:flex; align-items:center; justify-content:center; }
+  .glow{ position:absolute; inset:0; margin:auto; pointer-events:none; opacity:.75; display:none; }
+  /* Canvas responsivo */
+  .wheel-wrap{ width:100%; max-width:520px; margin:auto; }
+  @media (max-width:420px){ .wheel-wrap{ max-width:420px } }
+  @media (max-width:360px){ .wheel-wrap{ max-width:360px } }
+
+  canvas{ width:100%; height:auto; display:block; }
+
+  .pin{
+    position:absolute; top:10px; left:50%; transform:translateX(-50%);
+    width:28px; height:auto;
+    filter: drop-shadow(0 0 6px rgba(0,0,0,.6));
+  }
+
+  .panel{
+    background: var(--panel);
+    border:1px solid var(--border); border-radius:16px; padding:16px;
+  }
+  .center{ text-align:center }
+  h1,h2,h3,p{ margin:0 0 8px }
+  h1{ font-size:24px }
+  .muted{ color:var(--muted) }
+
+  .stat{
+    display:flex; align-items:center; gap:12px; justify-content:center; margin:8px 0 14px;
+  }
+  .badge{
+    width:46px; height:46px; border-radius:12px;
+    background: radial-gradient(100% 100% at 50% 0%, rgba(0,209,255,.35), rgba(124,77,255,.35));
+    display:grid; place-items:center; font-weight:700; font-size:18px;
+    box-shadow: inset 0 0 10px rgba(124,77,255,.35);
+  }
+
+  .btn{
+    appearance:none; border:none; cursor:pointer;
+    padding:12px 16px; border-radius:12px; font-weight:700;
+    background: linear-gradient(90deg, #6c59ff, #00d1ff);
+    color:#0a1020; width:100%;
+    box-shadow: 0 8px 20px rgba(0,0,0,.35);
+  }
+  .btn:disabled{ opacity:.55; cursor:not-allowed }
+  .btn.secondary{
+    background: #1a1f4a; color:var(--text); border:1px solid var(--border);
+  }
+  .btn.ok{
+    background: #25D366; color:#0b0f1e;
+  }
+
+  .row{ display:flex; gap:10px; }
+  .row .btn{ flex:1 }
+
+  .cta{
+    display:flex; align-items:center; gap:12px; margin-top:14px;
+    padding:12px; border:1px dashed var(--border); border-radius:12px;
+    background: linear-gradient(180deg, rgba(124,77,255,.06), rgba(0,0,0,0));
+  }
+  .agent{ width:40px; height:40px; border-radius:50%; object-fit:cover }
+  .cta small{ color:var(--muted); display:block }
+
+  .trust{ display:flex; flex-wrap:wrap; gap:14px; margin-top:12px }
+  .trust li{ list-style:none; display:flex; align-items:center; gap:8px; color:var(--muted); font-size:13px }
+  .trust img{ width:16px; height:16px; opacity:.9 }
+
+  /* confeti */
+  .confetti{ position:fixed; inset:0; pointer-events:none; z-index:40 }
+  .confetti i{
+    position:absolute; width:10px; height:14px; opacity:0; top:-20px;
+    background: linear-gradient(#ffea00,#ff3d7f);
+    animation: drop 1.6s linear forwards; transform: rotate(0deg);
+    border-radius:2px;
+  }
+  @keyframes drop{
+    8%{ opacity:1 }
+    100%{ transform: translateY(110vh) rotate(360deg); opacity:0 }
+  }
+
+  /* ticker */
+  .ticker{ overflow:hidden; border-radius:12px; border:1px solid var(--border); }
+  .ticker .track{ white-space:nowrap; display:inline-block; padding:8px 0; animation: sc 18s linear infinite; }
+  .ticker span{ color:#cfd3ff; opacity:.85; margin:0 22px }
+  @keyframes sc{ from{transform:translateX(0)} to{transform:translateX(-50%)} }
 </style>
 </head>
 <body>
-<div class="wrap">
+
+<!-- (Opcional) si subís un fondo, cambia style="display:none" a "display:block" -->
+<img class="bg-img" src="/img/bg-casino.webp" alt=""/>
+
+<div id="confetti" class="confetti" aria-hidden="true"></div>
+
+<div class="container">
   <div class="card">
-    <header>
-      <div class="brand">
-        <div class="logo" aria-hidden="true"></div>
-        <div>
-          <h1 style="margin:0">BET300</h1>
-          <small>Ruleta de BONUS • Gira y ganá 20%–50%</small>
-        </div>
+    <div class="head">
+      <!-- Cambiá el src por tu logo; si no tenés, este SVG mínimo funciona -->
+      <img class="brand" src="/img/logo.svg" alt="BET300" onerror="this.outerHTML='<strong>BET300</strong>'">
+      <span class="pill">Ruleta de bonus · con tu próxima carga</span>
+    </div>
+
+    <!-- Ticker prueba social -->
+    <div class="ticker" aria-hidden="true" style="margin:8px 0 14px">
+      <div class="track">
+        <span>Mica ganó 35%</span><span>|</span>
+        <span>Leo ganó 25%</span><span>|</span>
+        <span>Fede ganó 40%</span><span>|</span>
+        <span>Luz ganó 30%</span><span>|</span>
+        <span>Tomi ganó 50%</span><span>|</span>
+        <span>Mica ganó 35%</span><span>|</span>
+        <span>Leo ganó 25%</span><span>|</span>
+        <span>Fede ganó 40%</span><span>|</span>
+        <span>Luz ganó 30%</span><span>|</span>
+        <span>Tomi ganó 50%</span>
       </div>
-      <span class="pill">Bonus aplicable <b>con tu próxima carga</b></span>
-    </header>
+    </div>
 
     <div class="grid">
-      <!-- Ruleta -->
-      <section class="stage" aria-label="Ruleta de bonus BET300">
-        <div class="pin" aria-hidden="true"></div>
-        <canvas id="wheel" width="640" height="640"></canvas>
-      </section>
+      <!-- Columna ruleta -->
+      <div class="panel">
+        <div class="stage">
+          <!-- Glow opcional (marco), mostrará si subís /img/glow-frame.svg -->
+          <img class="glow" id="glow" src="/img/glow-frame.svg" alt="" onload="this.style.display='block'">
+          <div class="wheel-wrap">
+            <canvas id="wheel" width="620" height="620"></canvas>
+          </div>
+          <!-- Pin: reemplazalo por tu /img/pin.svg -->
+          <img class="pin" id="pin" src="/img/pin.svg" alt=""/>
+        </div>
+      </div>
 
-      <!-- Lateral / Acciones -->
-      <aside class="side">
-        <div class="result" id="resultBox" aria-live="polite">
-          <div>
+      <!-- Columna info/acciones -->
+      <div class="panel">
+        <div class="center">
+          <div class="stat">
             <div class="badge" id="badge">%</div>
-            <h2 id="resultTitle">🎯 Tenés 1 giro disponible</h2>
-            <small id="resultNote">El bonus se acredita con tu <b>próxima carga mínima</b>.</small>
+            <div>
+              <h1 id="title">Tenés 1 giro disponible</h1>
+              <p class="muted" id="subtitle">El bonus se acredita con tu <b>próxima carga mínima</b>.</p>
+            </div>
           </div>
         </div>
 
-        <div class="btns">
-          <button id="spinBtn" class="btn btn-primary">🌀 Girar ruleta</button>
-          <button id="claimBtn" class="btn btn-whats" disabled>📲 Reclamar bonus con mi carga</button>
-          <button id="resetBtn" class="btn btn-ghost" title="Solo para test">Reiniciar prueba</button>
+        <div class="row" style="margin-top:8px">
+          <button id="spinBtn" class="btn">🎯 Girar ruleta</button>
+          <button id="resetBtn" class="btn secondary">Reiniciar prueba</button>
         </div>
 
-        <!-- Urgencia (contador del día) -->
-        <div class="meta">⏳ Promo activa HOY: <b><span id="countdown">--:--:--</span></b></div>
-        <!-- Escasez (cupos restantes) -->
-        <div class="stock">🎁 Bonos disponibles hoy: <b><span id="slotsLeft">18</span></b></div>
+        <button id="claimBtn" class="btn ok" style="margin-top:10px" disabled>
+          📲 Reclamar bonus con mi carga
+        </button>
 
-        <div class="foot">
-          Bonus válido por 1 uso • <b>Se aplica con la próxima carga</b> (mínimo según operador). Vigencia: hoy. Sujeto a validación antifraude.
+        <div class="cta">
+          <img class="agent" src="/img/agent.png" alt="Agente">
+          <div>
+            <strong>¿Dudas?</strong>
+            <small>Atiende soporte · respuesta en 1–2 min</small>
+          </div>
+          <a id="wpDirect" class="btn ok" style="margin-left:auto; padding:10px 12px" target="_blank" rel="noopener">Abrir WhatsApp</a>
         </div>
-      </aside>
+
+        <ul class="trust">
+          <li><img src="/img/badges/secure.svg" alt=""> Pago seguro</li>
+          <li><img src="/img/badges/support.svg" alt=""> Soporte 24/7</li>
+          <li><img src="/img/badges/fast.svg" alt=""> Acreditación rápida</li>
+        </ul>
+      </div>
     </div>
+  </div>
+
+  <div class="card center muted" style="font-size:13px">
+    <p>Promoción válida solo con <b>carga mínima</b>. El bonus aplica a la <b>próxima carga</b> y no es acumulable con otras promos. Sujeto a términos de la plataforma.</p>
   </div>
 </div>
 
-<div id="toast" class="toast">Ya usaste tu giro de hoy. Volvé mañana ✨</div>
-
 <script>
-/* ========== CONFIG ========== */
-const CONFIG = {
-  waDefault: "5491126980720",  // default si no viene ?wapp=
-  baseMsg : "Hola 👋 Quiero reclamar mi bonus",
-  minInfo : "aplicable con mi próxima carga mínima",
-  prizes: [
-    {label:"20%", weight:36},
-    {label:"25%", weight:26},
-    {label:"30%", weight:20},
-    {label:"40%", weight:12},
-    {label:"50%", weight:6}
-  ],
-  dailyLockHours: 24,
-  colors: ["#0bd0ff","#7a5cff","#00f2a9","#ff4dd2","#ffd166"]
+/* =====================  CONFIG  ======================= */
+
+/* WhatsApp principal (default) y por PC con ?pc=1,2,3 */
+const WP_NUMBERS = {
+  principal: "5491157737173",  // <-- tu número principal (sin +)
+  pc1:       "5491138601132",  // <-- PC1 (cambiar)
+  pc2:       "5491138214312",  // <-- PC2
+  pc3:       "5491168392647"   // <-- PC3
 };
-/* ========== Helpers ========== */
-const $ = q => document.querySelector(q);
-const spinBtn=$("#spinBtn"), claimBtn=$("#claimBtn"), resetBtn=$("#resetBtn");
-const resultBox=$("#resultBox"), resultTitle=$("#resultTitle"), resultNote=$("#resultNote"), badgeEl=$("#badge");
-const countdown=$("#countdown"), slotsLeftEl=$("#slotsLeft"), toast=$("#toast");
-const canvas=$("#wheel"), ctx=canvas.getContext("2d");
-const W=canvas.width, H=canvas.height, cx=W/2, cy=H/2, r=Math.min(W,H)/2-18;
 
+/* Mensaje base. %PRIZE% será reemplazado por el premio. */
+const WP_MSG = "Hola, gané %PRIZE%% de bonus en la ruleta y quiero reclamarlo con mi próxima carga.";
+
+/* Segmentos de la ruleta (porcentajes) */
+const SEGMENTS = [20,25,30,40,50];
+
+/* Colores de cada segmento (neón casino) */
+const COLORS = ["#44e0ff","#7a5bff","#16e2b6","#ff6ad5","#ffd166"];
+
+/* ====================================================== */
+
+const wheel = document.getElementById('wheel');
+const ctx = wheel.getContext('2d');
+const spinBtn = document.getElementById('spinBtn');
+const resetBtn = document.getElementById('resetBtn');
+const claimBtn = document.getElementById('claimBtn');
+const wpDirect = document.getElementById('wpDirect');
+const badge = document.getElementById('badge');
+const title = document.getElementById('title');
+const subtitle = document.getElementById('subtitle');
+const confettiHolder = document.getElementById('confetti');
+
+let angle = 0, spinning=false, prize=null;
+
+/* WhatsApp según query ?pc=1/2/3 */
 const params = new URLSearchParams(location.search);
-const WAPP = (params.get("wapp") || CONFIG.waDefault).replace(/[^\d]/g,"");
-const SRC  = params.get("src") ? ` | src:${params.get("src")}` : "";
+const pc = params.get('pc');
+let wpTarget = WP_NUMBERS.principal;
+if(pc === '1') wpTarget = WP_NUMBERS.pc1 || WP_NUMBERS.principal;
+if(pc === '2') wpTarget = WP_NUMBERS.pc2 || WP_NUMBERS.principal;
+if(pc === '3') wpTarget = WP_NUMBERS.pc3 || WP_NUMBERS.principal;
 
-/* ========== Ruleta ========== */
-function drawWheel(angleOffset=0){
-  const SEGMENTS = CONFIG.prizes.length;
-  const segAngle = 2*Math.PI / SEGMENTS;
-  ctx.clearRect(0,0,W,H);
-  for(let i=0;i<SEGMENTS;i++){
-    ctx.save(); ctx.translate(cx,cy); ctx.rotate(i*segAngle + angleOffset);
-    ctx.beginPath(); ctx.moveTo(0,0); ctx.arc(0,0,r,0,segAngle); ctx.closePath();
-    ctx.fillStyle = CONFIG.colors[i % CONFIG.colors.length]; ctx.globalAlpha=.95; ctx.fill();
-    ctx.strokeStyle="rgba(255,255,255,.12)"; ctx.lineWidth=2; ctx.stroke();
-    ctx.rotate(segAngle/2); ctx.fillStyle="#0b0b12"; ctx.font="900 54px Outfit, system-ui"; ctx.textAlign="right";
-    ctx.shadowColor="rgba(255,255,255,.24)"; ctx.shadowBlur=2; ctx.fillText(CONFIG.prizes[i].label, r-30, 18);
+/* enlace directo (si aún no hay premio) */
+wpDirect.href = `https://wa.me/${wpTarget}`;
+
+/* 1 giro por sesión */
+if(localStorage.getItem('wheel_spun') === '1'){
+  prize = parseInt(localStorage.getItem('wheel_prize') || '0',10);
+  if(prize){
+    setWonState(prize);
+    angle = segmentToAngle(prize) + Math.PI*2; // orientar la ruleta al premio
+  }else{
+    disableSpinMsg();
+  }
+}
+draw(angle);
+
+/* dibuja ruleta */
+function draw(a){
+  const {width,height} = wheel;
+  const cx = width/2, cy = height/2, r = Math.min(cx,cy) - 10;
+  ctx.clearRect(0,0,width,height);
+
+  const total = SEGMENTS.length;
+  const arc = Math.PI*2 / total;
+
+  for(let i=0;i<total;i++){
+    const start = a + i*arc;
+    const end = start + arc;
+    ctx.beginPath();
+    ctx.moveTo(cx,cy);
+    ctx.arc(cx,cy,r,start,end,false);
+    ctx.closePath();
+    ctx.fillStyle = COLORS[i % COLORS.length];
+    ctx.fill();
+
+    // separador
+    ctx.strokeStyle = "rgba(10,15,35,.35)";
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    // texto
+    const label = SEGMENTS[i] + "%";
+    ctx.save();
+    ctx.translate(cx,cy);
+    ctx.rotate(start + arc/2);
+    ctx.textAlign = "right";
+    ctx.fillStyle = "#091024";
+    ctx.font = "bold 44px system-ui, -apple-system, Segoe UI, Roboto";
+    ctx.fillText(label, r - 24, 12);
     ctx.restore();
   }
-  ctx.beginPath(); ctx.arc(cx,cy,r+4,0,2*Math.PI); ctx.strokeStyle="rgba(122,92,255,.7)"; ctx.lineWidth=6; ctx.stroke();
+
+  // disco central
+  ctx.beginPath();
+  ctx.arc(cx,cy,60,0,Math.PI*2);
+  ctx.fillStyle = "#0e1230";
+  ctx.fill();
+  ctx.strokeStyle = "rgba(124,77,255,.6)";
+  ctx.lineWidth = 4;
+  ctx.stroke();
 }
-drawWheel();
 
-function weightedPick(items){
-  const total = items.reduce((a,b)=>a+b.weight,0);
-  let rnd = Math.random()*total;
-  for(const it of items){ if(rnd<it.weight) return it.label; rnd-=it.weight; }
-  return items[0].label;
+/* mapea premio a ángulo del segmento */
+function segmentToAngle(pct){
+  const idx = SEGMENTS.indexOf(pct);
+  const total = SEGMENTS.length;
+  const arc = Math.PI*2 / total;
+  const base = (Math.PI*1.5) - (arc/2); // arriba
+  return base - idx*arc;
 }
 
-const LOCK_KEY="ruleta_lock_ts_bet300";
-function canSpin(){ const ts=Number(localStorage.getItem(LOCK_KEY)||0); return ((Date.now()-ts)/(1000*60*60))>=CONFIG.dailyLockHours; }
-function setLock(){ localStorage.setItem(LOCK_KEY, Date.now()); }
-function showToast(msg){ toast.textContent=msg; toast.classList.add("show"); setTimeout(()=>toast.classList.remove("show"),2000); }
-
-/* ========== Spin flow ========== */
-let spinning=false, currentAngle=0, lastPrize=null;
-function spin(){
+/* gira */
+spinBtn.addEventListener('click', ()=>{
   if(spinning) return;
-  if(!canSpin()){ showToast("Ya usaste tu giro de hoy. Volvé mañana ✨"); return; }
-  spinning=true; spinBtn.disabled=true; claimBtn.disabled=true;
+  if(localStorage.getItem('wheel_spun') === '1') return disableSpinMsg();
 
-  const prize = weightedPick(CONFIG.prizes); lastPrize=prize;
-  const SEGMENTS=CONFIG.prizes.length, segAngle=2*Math.PI/SEGMENTS;
-  const idx = CONFIG.prizes.findIndex(p=>p.label===prize);
-  const targetAngle = (Math.PI/2) - (idx*segAngle + segAngle/2);
-  const extraTurns = 4 + Math.floor(Math.random()*2);
-  const dest = currentAngle + extraTurns*2*Math.PI + targetAngle;
+  spinning = true;
+  spinBtn.disabled = true;
 
-  const duration = 2600 + Math.random()*800; const start = performance.now(); const from = currentAngle;
-  const ease = t=>1-Math.pow(1-t,3);
+  // ganador al azar
+  const win = SEGMENTS[Math.floor(Math.random()*SEGMENTS.length)];
+  prize = win;
 
-  function frame(now){
-    const p=Math.min(1,(now-start)/duration);
-    currentAngle = from + (dest-from)*ease(p);
-    drawWheel(currentAngle);
-    if(p<1){ requestAnimationFrame(frame); }
-    else{ spinning=false; currentAngle=currentAngle%(2*Math.PI); onStop(prize); setLock(); }
-  }
-  requestAnimationFrame(frame);
-}
-
-function onStop(prize){
-  badgeEl.textContent = prize.replace("%","");
-  resultTitle.innerHTML = `🎉 ¡Felicitaciones! Ganaste <b>${prize}</b> de BONUS`;
-  resultNote.innerHTML   = `El bonus se acredita con tu <b>próxima carga mínima</b>.`;
-
-  // Micro pulso visual
-  resultBox.animate(
-    [{boxShadow:`0 0 0 0 rgba(22,213,122,0)`},{boxShadow:`0 0 0 10px rgba(22,213,122,.25)`},{boxShadow:`0 0 0 0 rgba(22,213,122,0)`}],
-    {duration:700,easing:"ease-out"}
-  );
-
-  // Vibración leve (móvil)
-  if (navigator.vibrate) { navigator.vibrate(20); }
-
-  // Enlace a WhatsApp
-  const msg = `${CONFIG.baseMsg} ${prize} ${CONFIG.minInfo}${SRC}`;
-  const wa  = `https://wa.me/${WAPP}?text=${encodeURIComponent(msg)}`;
-  claimBtn.onclick = ()=>{ window.location.href = wa; };
-  claimBtn.disabled=false;
-
-  // Baja “cupos” si corresponde
-  if (window._slotsLeft && window._slotsLeft > 4){
-    window._slotsLeft--; slotsLeftEl.textContent = window._slotsLeft;
-  }
-}
-
-spinBtn.addEventListener("click", spin);
-resetBtn.addEventListener("click", ()=>{
-  localStorage.removeItem(LOCK_KEY);
-  lastPrize=null; claimBtn.disabled=true;
-  resultTitle.textContent="🎯 Tenés 1 giro disponible";
-  resultNote.innerHTML=`El bonus se acredita con tu <b>próxima carga mínima</b>.`;
+  const finalAngle = segmentToAngle(win) + Math.PI*2*6 + (Math.random()>.5?0.02:-0.02); // vueltas + leve variación
+  animateTo(finalAngle, 2800, ()=>{
+    setWonState(win);
+    localStorage.setItem('wheel_spun','1');
+    localStorage.setItem('wheel_prize', String(win));
+    spinning = false;
+  });
 });
 
-/* ========== Contador (expira hoy) ========== */
-(function countdownTick(){
-  if(!countdown) return;
-  function endOfDay(){
-    const d = new Date(); d.setHours(23,59,59,999); return d.getTime();
-  }
-  function tick(){
-    const t = endOfDay() - Date.now();
-    if(t <= 0){ countdown.textContent = "00:00:00"; return; }
-    const h = Math.floor(t/3_600_000);
-    const m = Math.floor((t%3_600_000)/60_000);
-    const s = Math.floor((t%60_000)/1000);
-    countdown.textContent = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
-    requestAnimationFrame(()=>setTimeout(tick, 250));
-  }
-  tick();
-})();
+/* animación simple */
+function animateTo(target, ms, cb){
+  const start = performance.now();
+  const from = angle;
+  (function loop(t){
+    const k = Math.min(1, (t-start)/ms);
+    const ease = 1 - Math.pow(1-k,3); // easeOutCubic
+    angle = from + (target - from) * ease;
+    draw(angle);
+    if(k<1) requestAnimationFrame(loop);
+    else cb && cb();
+  })(start);
+}
 
-/* ========== Cupos (escasez suave) ========== */
-(function stockSim(){
-  if(!slotsLeftEl) return;
-  const base = 16 + Math.floor(Math.random()*6); // 16–21
-  window._slotsLeft = base;
-  slotsLeftEl.textContent = base;
-  setInterval(()=>{
-    if(window._slotsLeft > 4 && Math.random() < 0.35){
-      window._slotsLeft -= 1;
-      slotsLeftEl.textContent = window._slotsLeft;
-    }
-  }, 7000);
-})();
+/* estado “ganado” */
+function setWonState(win){
+  badge.textContent = win + "%";
+  title.textContent = `🎉 ¡Ganaste ${win}% de bonus!`;
+  subtitle.innerHTML = `Usalo <b>con tu próxima carga</b>.`;
+
+  claimBtn.disabled = false;
+  const msg = WP_MSG.replace("%PRIZE%", String(win));
+  claimBtn.onclick = ()=> {
+    location.href = `https://wa.me/${wpTarget}?text=${encodeURIComponent(msg)}`;
+  };
+
+  // botón directo de soporte
+  wpDirect.href = `https://wa.me/${wpTarget}?text=${encodeURIComponent("Hola, tengo una consulta sobre mi bonus.")}`;
+
+  burstConfetti();
+}
+
+/* si ya giró */
+function disableSpinMsg(){
+  spinBtn.disabled = true;
+  title.textContent = "¡Ya usaste tu giro!";
+  subtitle.textContent = "Reclamá tu bonus por WhatsApp.";
+}
+
+/* reset */
+resetBtn.addEventListener('click', ()=>{
+  localStorage.removeItem('wheel_spun');
+  localStorage.removeItem('wheel_prize');
+  prize = null; angle = 0; draw(angle);
+  spinBtn.disabled = false;
+  claimBtn.disabled = true;
+  badge.textContent = "%";
+  title.textContent = "Tenés 1 giro disponible";
+  subtitle.innerHTML = `El bonus se acredita con tu <b>próxima carga mínima</b>.`;
+});
+
+/* confeti */
+function burstConfetti(){
+  confettiHolder.innerHTML = '';
+  const n = 26;
+  for(let i=0;i<n;i++){
+    const p = document.createElement('i');
+    p.style.left = (Math.random()*100)+'vw';
+    p.style.animationDelay = (Math.random()*0.5)+'s';
+    p.style.background = Math.random()<.5
+      ? 'linear-gradient(#80ffea,#4e9cff)'
+      : 'linear-gradient(#ffd166,#ff3d7f)';
+    confettiHolder.appendChild(p);
+  }
+  setTimeout(()=> confettiHolder.innerHTML = '', 1800);
+}
 </script>
 </body>
 </html>
