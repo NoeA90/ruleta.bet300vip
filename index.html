@@ -11,12 +11,16 @@
   --text:#e8ebff; --muted:#b7b9d6; --ok:#25D366; --pointer:#22d3ee;
 }
 *{box-sizing:border-box} html,body{height:100%}
-body{margin:0;color:var(--text);background:var(--bg);font:16px/1.35 system-ui,-apple-system,Segoe UI,Roboto}
+body{
+  margin:0;color:var(--text);
+  background:var(--bg);font:16px/1.35 system-ui,-apple-system,Segoe UI,Roboto
+}
 body::before{
   content:"";position:fixed;inset:0;z-index:-2;
-  background: radial-gradient(900px 500px at 50% -10%, rgba(101,74,255,.25), transparent),
-              radial-gradient(700px 350px at 100% 0%, rgba(0,209,255,.18), transparent),
-              linear-gradient(180deg,#0b0f1e 0%,#0b0f1e 60%,#0a0d20 100%);
+  background:
+    radial-gradient(900px 500px at 50% -10%, rgba(101,74,255,.25), transparent),
+    radial-gradient(700px 350px at 100% 0%, rgba(0,209,255,.18), transparent),
+    linear-gradient(180deg,#0b0f1e 0%,#0b0f1e 60%,#0a0d20 100%);
 }
 .bg{position:fixed;inset:0;z-index:-3;opacity:.24;object-fit:cover;width:100%;height:100%}
 .container{max-width:980px;margin:0 auto;padding:18px 14px 28px}
@@ -32,22 +36,28 @@ body::before{
 }
 .grid{display:grid;gap:16px;grid-template-columns:minmax(0,1fr)}
 @media(min-width:900px){.grid{grid-template-columns:1.15fr .85fr}}
-.stage{position:relative;display:flex;align-items:center;justify-content:center}
-.wrap{width:100%;max-width:520px;margin:auto}
+
+/* ESCENARIO centrado (mobile-first) */
+.stage{
+  position:relative;display:flex;align-items:center;justify-content:center
+}
+.wrap{width:100%;max-width:520px;margin:auto;position:relative}
 canvas{width:100%;height:auto;display:block}
 
-/* Indicador (triángulo) que asigna el premio */
+/* Indicador (triángulo) */
 .pointer{
   position:absolute; top:6px; left:50%; transform:translateX(-50%);
   width:0; height:0;
-  border-left: 16px solid transparent;
-  border-right:16px solid transparent;
+  border-left:16px solid transparent;border-right:16px solid transparent;
   border-bottom:26px solid var(--pointer);
-  filter: drop-shadow(0 4px 10px rgba(34,211,238,.35));
+  filter:drop-shadow(0 4px 10px rgba(34,211,238,.35));
   z-index:2;
 }
 @media (max-width:420px){
-  .pointer{ border-left:12px solid transparent; border-right:12px solid transparent; border-bottom:22px solid var(--pointer); top:4px; }
+  .pointer{
+    border-left:12px solid transparent;border-right:12px solid transparent;
+    border-bottom:22px solid var(--pointer); top:4px;
+  }
 }
 
 .panel{background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:16px}
@@ -64,9 +74,8 @@ h1,h2,h3,p{margin:0 0 8px} h1{font-size:24px} .muted{color:var(--muted)}
   appearance:none;border:none;cursor:pointer;padding:12px 16px;border-radius:12px;font-weight:700;
   background:linear-gradient(90deg,#6c59ff,#00d1ff);color:#0a1020;width:100%;box-shadow:0 8px 20px rgba(0,0,0,.35)
 }
-.btn.secondary{background:#1a1f4a;color:var(--text);border:1px solid var(--border)}
-.btn:disabled{opacity:.55;cursor:not-allowed}
 .btn.ok{background:var(--ok);color:#0b0f1e}
+.btn:disabled{opacity:.55;cursor:not-allowed}
 .cta{
   display:flex;align-items:center;gap:12px;margin-top:14px;padding:12px;border:1px dashed var(--border);border-radius:12px;
   background:linear-gradient(180deg,rgba(124,77,255,.06),rgba(0,0,0,0))
@@ -104,8 +113,7 @@ h1,h2,h3,p{margin:0 0 8px} h1{font-size:24px} .muted{color:var(--muted)}
         <div class="stage">
           <img src="img/glow-frame.svg" alt="" style="position:absolute;inset:0;margin:auto;width:100%;max-width:520px;opacity:.8;pointer-events:none">
           <div class="wrap"><canvas id="wheel" width="620" height="620"></canvas></div>
-
-          <!-- 🔺 Indicador: si el centro del segmento queda debajo, ese es el premio -->
+          <!-- 🔺 Indicador arriba -->
           <div class="pointer" aria-hidden="true"></div>
         </div>
       </div>
@@ -123,7 +131,7 @@ h1,h2,h3,p{margin:0 0 8px} h1{font-size:24px} .muted{color:var(--muted)}
 
         <div class="row" style="margin-top:8px">
           <button id="spinBtn" class="btn">🎯 Girar ruleta</button>
-          <button id="resetBtn" class="btn secondary">Reiniciar prueba</button>
+          <!-- 🔧 botón de prueba REMOVIDO -->
         </div>
 
         <button id="claimBtn" class="btn ok" style="margin-top:10px" disabled>📲 Reclamar por WhatsApp</button>
@@ -152,7 +160,6 @@ const WP_MSG = "Hola, gané $%AMOUNT% en fichas extra en la ruleta y quiero recl
 const wheel = document.getElementById('wheel');
 const ctx = wheel.getContext('2d');
 const spinBtn = document.getElementById('spinBtn');
-const resetBtn = document.getElementById('resetBtn');
 const claimBtn = document.getElementById('claimBtn');
 const badge = document.getElementById('badge');
 const title = document.getElementById('title');
@@ -163,7 +170,7 @@ const wpDirect = document.getElementById('wpDirect');
 
 let angle = 0, spinning = false, prize = null, cx, cy, r, cssW = 0;
 
-/* WhatsApp destino por ?pc= */
+/* WhatsApp destino por ?pc= (SE MANTIENE) */
 const params = new URLSearchParams(location.search);
 const pc = params.get('pc');
 let WP = WP_NUMBERS.principal;
@@ -241,11 +248,8 @@ spinBtn.addEventListener('click', ()=>{
 function detectPrize(a){
   const n = AMOUNTS.length;
   const arc = Math.PI*2/n;
-  // normalizar ángulo en [0,2π)
   const norm = (a % (2*Math.PI) + 2*Math.PI) % (2*Math.PI);
-  // ángulo que apunta el puntero (arriba, -90°)
-  const pointerAngle = Math.PI * 1.5;
-  // desplazamiento relativo
+  const pointerAngle = Math.PI * 1.5; // -90°
   const diff = (norm - pointerAngle + 2*Math.PI) % (2*Math.PI);
   const idx = Math.floor(diff / arc);
   return AMOUNTS[(n - idx - 1 + n) % n];
@@ -274,17 +278,11 @@ function setWon(amount){
   confettiBurst();
 }
 
-/* Reset (solo test) */
-resetBtn.addEventListener('click', ()=>{
-  localStorage.removeItem('spin_done'); localStorage.removeItem('spin_amount');
-  prize=null; angle=0; draw(angle);
-  badge.textContent="$0"; title.textContent="Tenés 1 giro disponible";
-  subtitle.innerHTML="Los bonos se acreditan con tu <b>próxima carga mínima</b>.";
-  claimBtn.disabled=true; spinBtn.disabled=false;
-});
-
 /* UI utils */
-function showToast(msg){ toast.textContent=msg; toast.classList.add('show'); setTimeout(()=>toast.classList.remove('show'), 1800); }
+function showToast(msg){
+  toast.textContent=msg; toast.classList.add('show');
+  setTimeout(()=>toast.classList.remove('show'), 1800);
+}
 function confettiBurst(){
   confetti.innerHTML='';
   const n = 26;
@@ -300,6 +298,7 @@ function confettiBurst(){
 
 /* Init */
 setSize();
+window.addEventListener('load', setSize);
 const saved = parseInt(localStorage.getItem('spin_amount')||'0',10);
 if(saved){
   badge.textContent = "$"+saved.toLocaleString("es-AR");
