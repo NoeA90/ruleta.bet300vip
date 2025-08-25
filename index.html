@@ -9,6 +9,7 @@
 :root{
   --bg:#0b0f1e; --panel:#121634; --panel2:#0f1330; --border:#1e2150;
   --text:#e8ebff; --muted:#b7b9d6; --ok:#25D366; --pointer:#22d3ee;
+  --alert:#ffcc00; --danger:#ff6b6b;
 }
 *{box-sizing:border-box} html,body{height:100%}
 body{margin:0;color:var(--text);background:var(--bg);font:16px/1.35 system-ui,-apple-system,Segoe UI,Roboto}
@@ -27,15 +28,23 @@ body::before{
   border:1px solid var(--border);border-radius:18px;padding:18px;box-shadow:0 15px 40px rgba(0,0,0,.35)
 }
 @media (max-width:520px){
-  .container{padding:0}             /* sin márgenes en mobile */
+  .container{padding:0}
   .card{border-radius:0;border-left:0;border-right:0;padding:14px}
 }
 
-.head{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.head{display:flex;align-items:center;gap:10px;margin-bottom:8px;flex-wrap:wrap}
 .brand{height:28px;width:auto;filter:drop-shadow(0 2px 8px rgba(0,0,0,.4))}
 .pill{
   background:linear-gradient(90deg,rgba(124,77,255,.15),rgba(0,209,255,.15));
   border:1px solid var(--border); border-radius:999px; padding:6px 10px; font-size:12px; color:var(--muted)
+}
+/* tiempo limitado + contador */
+.pill.time{display:flex;align-items:center;gap:8px}
+.count{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:4px 8px;border-radius:999px;
+  background:rgba(255,204,0,.15);border:1px solid rgba(255,204,0,.35);
+  color:#ffe27a;font-weight:700;font-variant-numeric:tabular-nums;
 }
 
 .grid{display:grid;gap:16px;grid-template-columns:minmax(0,1fr)}
@@ -76,25 +85,29 @@ h1,h2,h3,p{margin:0 0 8px} h1{font-size:24px} .muted{color:var(--muted)}
 .btn.secondary{background:#1a1f4a;color:var(--text);border:1px solid var(--border)}
 .btn:disabled{opacity:.55;cursor:not-allowed}
 .btn.ok{background:var(--ok);color:#0b0f1e}
+.btn.play{background:linear-gradient(90deg,#ffd166,#ff7ab6);color:#0a1020}
 
-.cta{
-  display:flex;align-items:center;gap:12px;margin-top:14px;padding:12px;border:1px dashed var(--border);border-radius:12px;
-  background:linear-gradient(180deg,rgba(124,77,255,.06),rgba(0,0,0,0))
+/* Caja promo */
+.promo{
+  display:flex;align-items:center;gap:10px;margin-top:10px;padding:12px;border:1px dashed var(--border);border-radius:12px;
+  background:linear-gradient(180deg,rgba(255,204,0,.07),rgba(0,0,0,0))
 }
-.agent{width:40px;height:40px;border-radius:50%;object-fit:cover}
+.promo.expired{border-color:rgba(255,107,107,.5);background:linear-gradient(180deg,rgba(255,107,107,.07),rgba(0,0,0,0))}
+.promo .dot{width:8px;height:8px;border-radius:50%;background:var(--alert)}
+.promo.expired .dot{background:var(--danger)}
 
+/* Toast & confetti */
 .toast{
   position:fixed;left:50%;bottom:24px;transform:translateX(-50%);
   background:#10162c;color:#e8ebff;border:1px solid var(--border);
   border-radius:10px;padding:10px 14px;font-size:14px;opacity:0;transition:.25s;box-shadow:0 10px 30px rgba(0,0,0,.45)
 }
 .toast.show{opacity:1}
-
 .confetti{position:fixed;inset:0;pointer-events:none;z-index:40}
 .confetti i{
   position:absolute;width:10px;height:14px;opacity:0;top:-20px;
   background:linear-gradient(#ffea00,#ff3d7f);
-  animation:drop 1.6s linear forwards;transform:rotate(0deg);border-radius:2px
+  animation:drop 1.6s linear forwards;transform:rotate(360deg);border-radius:2px
 }
 @keyframes drop{8%{opacity:1}100%{transform:translateY(110vh) rotate(360deg);opacity:0}}
 </style>
@@ -109,6 +122,9 @@ h1,h2,h3,p{margin:0 0 8px} h1{font-size:24px} .muted{color:var(--muted)}
     <div class="head">
       <img class="brand" src="img/logo-bet300.svg" alt="BET300" onerror="this.outerHTML='<strong>BET300</strong>'">
       <span class="pill">Ruleta de bonos · se acredita con la próxima carga</span>
+      <span class="pill time">⚡ Tiempo limitado
+        <span class="count" id="countdown">--:--</span>
+      </span>
     </div>
 
     <div class="grid">
@@ -116,7 +132,6 @@ h1,h2,h3,p{margin:0 0 8px} h1{font-size:24px} .muted{color:var(--muted)}
         <div class="stage">
           <img src="img/glow-frame.svg" alt="" style="position:absolute;inset:0;margin:auto;width:100%;max-width:520px;opacity:.8;pointer-events:none">
           <div class="wrap"><canvas id="wheel" width="620" height="620"></canvas></div>
-          <!-- 🔺 Indicador: si el centro del segmento queda debajo, ese es el premio -->
           <div class="pointer" aria-hidden="true"></div>
         </div>
       </div>
@@ -134,15 +149,17 @@ h1,h2,h3,p{margin:0 0 8px} h1{font-size:24px} .muted{color:var(--muted)}
 
         <div class="row" style="margin-top:8px">
           <button id="spinBtn" class="btn">🎯 Girar ruleta</button>
-          <!-- Botón de prueba removido -->
         </div>
 
         <button id="claimBtn" class="btn ok" style="margin-top:10px" disabled>📲 Reclamar por WhatsApp</button>
 
-        <div class="cta">
-          <img class="agent" src="img/agent.png" alt="Agente" onerror="this.style.display='none'">
-          <div><strong>¿Dudas?</strong><br><span class="muted">Soporte responde en 1–2 min</span></div>
-          <a id="wpDirect" class="btn ok" style="margin-left:auto;padding:10px 12px" target="_blank" rel="noopener">Abrir WhatsApp</a>
+        <div class="promo" id="promoBox">
+          <span class="dot" aria-hidden="true"></span>
+          <div style="flex:1">
+            <strong>Bonos especiales por tiempo limitado.</strong><br>
+            <span class="muted">Accedé ahora y participá antes de que termine.</span>
+          </div>
+          <a id="playNow" class="btn play" style="margin-left:auto;padding:10px 12px;white-space:nowrap" target="_blank" rel="noopener">🎮 Entrar a la plataforma</a>
         </div>
       </div>
     </div>
@@ -159,30 +176,48 @@ const WP_NUMBERS = {
 };
 const WP_MSG = "Hola, gané $%AMOUNT% en fichas extra en la ruleta y quiero reclamarlo con mi próxima carga.";
 
+/* Plataforma por PC */
+const PLATFORM_LINKS = {
+  principal: "https://plataforma.example/inicio",
+  pc1: "https://plataforma.example/pc1",
+  pc2: "https://plataforma.example/pc2",
+  pc3: "https://plataforma.example/pc3"
+};
+
 /* ========= Estado ========= */
-const wheel   = document.getElementById('wheel');
-const ctx     = wheel.getContext('2d');
-const spinBtn = document.getElementById('spinBtn');
-const claimBtn= document.getElementById('claimBtn');
-const badge   = document.getElementById('badge');
-const title   = document.getElementById('title');
-const subtitle= document.getElementById('subtitle');
-const toast   = document.getElementById('toast');
-const confetti= document.getElementById('confetti');
-const wpDirect= document.getElementById('wpDirect');
+const wheel    = document.getElementById('wheel');
+const ctx      = wheel.getContext('2d');
+const spinBtn  = document.getElementById('spinBtn');
+const claimBtn = document.getElementById('claimBtn');
+const badge    = document.getElementById('badge');
+const title    = document.getElementById('title');
+const subtitle = document.getElementById('subtitle');
+const toast    = document.getElementById('toast');
+const confetti = document.getElementById('confetti');
+const playNow  = document.getElementById('playNow');
+const promoBox = document.getElementById('promoBox');
+const countdownEl = document.getElementById('countdown');
 
 let angle = 0, spinning = false, prize = null, cx, cy, r, cssW = 0;
 
-/* WhatsApp destino por ?pc= */
+/* Parámetro pc */
 const params = new URLSearchParams(location.search);
 const pc = params.get('pc');
+
+/* WhatsApp destino */
 let WP = WP_NUMBERS.principal;
 if(pc==='1') WP = WP_NUMBERS.pc1 || WP;
 if(pc==='2') WP = WP_NUMBERS.pc2 || WP;
 if(pc==='3') WP = WP_NUMBERS.pc3 || WP;
-wpDirect.href = `https://wa.me/${WP}`;
 
-/* Responsive canvas: usar ancho real del contenedor */
+/* Plataforma destino */
+let PLATFORM = PLATFORM_LINKS.principal;
+if(pc==='1') PLATFORM = PLATFORM_LINKS.pc1 || PLATFORM;
+if(pc==='2') PLATFORM = PLATFORM_LINKS.pc2 || PLATFORM;
+if(pc==='3') PLATFORM = PLATFORM_LINKS.pc3 || PLATFORM;
+playNow.href = PLATFORM;
+
+/* Canvas responsive al ancho real del wrap */
 function getWrapWidth(){
   const wrap = document.querySelector('.wrap');
   if (wrap) {
@@ -194,7 +229,7 @@ function getWrapWidth(){
 function setSize(){
   const dpr = window.devicePixelRatio || 1;
   const w = Math.min(520, Math.max(280, getWrapWidth()));
-  cssW = w; // ancho CSS actual
+  cssW = w;
   wheel.width  = Math.floor(w * dpr);
   wheel.height = Math.floor(w * dpr);
   wheel.style.width  = w + 'px';
@@ -244,40 +279,63 @@ function draw(a){
   ctx.stroke();
 }
 
-/* Mapear monto -> ángulo (puntero fijo arriba) */
-function targetAngleFor(amount){
-  const idx = AMOUNTS.indexOf(amount);
-  const arc = Math.PI*2/AMOUNTS.length;
-  const base = (Math.PI*1.5) - (arc/2); // top
-  return base - idx*arc;
+/* Premio por posición final (bajo el puntero) */
+function normAngle(rad){
+  const TWO_PI = Math.PI*2;
+  return ((rad % TWO_PI) + TWO_PI) % TWO_PI; // [0, 2π)
+}
+function winnerIndexByAngle(a){
+  const n   = AMOUNTS.length;
+  const arc = Math.PI*2 / n;
+  const pointer = Math.PI * 1.5; // top
+
+  let bestIdx = 0;
+  let bestDist = Infinity;
+
+  for(let i=0;i<n;i++){
+    const center = normAngle(a + i*arc + arc/2);
+    let diff = Math.abs(normAngle(center - pointer));
+    if (diff > Math.PI) diff = (Math.PI*2) - diff;
+    if (diff < bestDist){ bestDist = diff; bestIdx = i; }
+  }
+  return bestIdx;
 }
 
-/* Spin */
+/* Animación */
+function animateTo(target, ms, cb){
+  const start = performance.now(); const from = angle;
+  (function loop(t){
+    const k = Math.min(1,(t-start)/ms);
+    const ease = 1 - Math.pow(1-k,3);
+    angle = from + (target-from)*ease; draw(angle);
+    if(k<1) requestAnimationFrame(loop); else cb&&cb();
+  })(start);
+}
+
+/* Spin por posición (no preselecciona premio) */
 spinBtn.addEventListener('click', ()=>{
   if(spinning) return;
+  if(isExpired()){ showToast("La promoción finalizó"); return; }
   if(localStorage.getItem('spin_done')==='1'){ showToast("Ya usaste tu giro de hoy"); return; }
 
-  spinning = true; spinBtn.disabled = true;
-  const win = AMOUNTS[Math.floor(Math.random()*AMOUNTS.length)];
-  prize = win;
-  const final = targetAngleFor(win) + Math.PI*2*(5 + Math.random()*1.5);
+  spinning = true;
+  spinBtn.disabled = true;
+
+  const extraTurns   = 5 + Math.random()*1.5;         // 5 a 6.5 vueltas
+  const randomOffset = Math.random() * Math.PI * 2;   // 0–360°
+  const final        = angle + (Math.PI*2*extraTurns) + randomOffset;
+
   animateTo(final, 3000, ()=>{
+    angle = final;
+    const idx = winnerIndexByAngle(angle);
+    const win = AMOUNTS[idx];
+    prize = win;
     setWon(win);
     localStorage.setItem('spin_done','1');
     localStorage.setItem('spin_amount', String(win));
     spinning = false;
   });
 });
-
-/* Animación */
-function animateTo(target, ms, cb){
-  const start = performance.now(); const from = angle;
-  (function loop(t){
-    const k = Math.min(1,(t-start)/ms); const ease = 1 - Math.pow(1-k,3);
-    angle = from + (target-from)*ease; draw(angle);
-    if(k<1) requestAnimationFrame(loop); else cb&&cb();
-  })(start);
-}
 
 /* Estado ganado */
 function setWon(amount){
@@ -288,8 +346,49 @@ function setWon(amount){
   claimBtn.disabled = false;
   const msg = WP_MSG.replace("%AMOUNT%", amount.toLocaleString("es-AR"));
   claimBtn.onclick = ()=> location.href = `https://wa.me/${WP}?text=${encodeURIComponent(msg)}`;
-  wpDirect.href = `https://wa.me/${WP}?text=${encodeURIComponent("Hola, tengo una consulta sobre mi premio.")}`;
   confettiBurst();
+}
+
+/* ==== Urgencia: vence hoy a las 23:59 (hora local) ==== */
+const DEADLINE_KEY = 'promo_end_fixed_ts';
+function computeToday2359(){
+  const now = new Date();
+  const end = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 0, 0); // local 23:59
+  return (end.getTime() > now.getTime()) ? end.getTime() : new Date(now.getFullYear(), now.getMonth(), now.getDate()+1, 23, 59, 0, 0).getTime();
+}
+function getOrInitFixedDeadline(){
+  const saved = parseInt(localStorage.getItem(DEADLINE_KEY)||'0',10);
+  const now = Date.now();
+  if(saved && saved > now) return saved;
+  const end = computeToday2359();
+  localStorage.setItem(DEADLINE_KEY, String(end));
+  return end;
+}
+function remainingMs(){
+  return Math.max(0, getOrInitFixedDeadline() - Date.now());
+}
+function isExpired(){ return remainingMs() <= 0; }
+function formatMMSS(ms){
+  const total = Math.floor(ms/1000);
+  const h = Math.floor(total/3600);
+  const m = Math.floor((total%3600)/60);
+  const s = total%60;
+  // si quedan horas, mostramos H:MM:SS, si no MM:SS
+  return (h>0)
+    ? `${h}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`
+    : `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+}
+function tickCountdown(){
+  const ms = remainingMs();
+  countdownEl.textContent = formatMMSS(ms);
+  if(ms <= 0){
+    promoBox.classList.add('expired');
+    spinBtn.disabled = true;
+    title.textContent = "⏱️ Oferta finalizada";
+    subtitle.innerHTML = `Los giros promocionales se habilitan en la próxima ventana.`;
+    return true;
+  }
+  return false;
 }
 
 /* UI utils */
@@ -309,11 +408,20 @@ function confettiBurst(){
 
 /* Init */
 setSize();
+
+/* iniciar contador */
+tickCountdown();
+const __interval = setInterval(()=>{
+  if(tickCountdown()) clearInterval(__interval);
+}, 1000);
+
+/* restaurar premio si ya había uno */
 const saved = parseInt(localStorage.getItem('spin_amount')||'0',10);
 if(saved){
-  badge.textContent = "$"+saved.toLocaleString("es-AR");
+  const fmt = "$"+saved.toLocaleString("es-AR");
+  badge.textContent = fmt;
   title.textContent = "🎉 ¡Premio obtenido!";
-  subtitle.innerHTML = `Recibís <b>$${saved.toLocaleString("es-AR")} en fichas extra</b> con tu próxima carga.`;
+  subtitle.innerHTML = `Recibís <b>${fmt} en fichas extra</b> con tu próxima carga.`;
   claimBtn.disabled = false;
   const msg = WP_MSG.replace("%AMOUNT%", saved.toLocaleString("es-AR"));
   claimBtn.onclick = ()=> location.href = `https://wa.me/${WP}?text=${encodeURIComponent(msg)}`;
