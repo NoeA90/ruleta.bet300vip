@@ -1,15 +1,278 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BET300 - Bono de Bienvenida</title>
-    <link rel="stylesheet" href="style.css">
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>BET300 | Ruleta de BONUS</title>
+<meta name="description" content="Girá la Ruleta BET300 y reclamá tu bonus extra con la próxima carga.">
+<meta name="theme-color" content="#0b0b12">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0a0a14; --bg2:#0f132b; --glass:#12142aeb; --stroke:#2a2d66;
+    --neon:#7a5cff; --neon2:#19e6ff; --ok:#16d57a; --text:#edf1ff; --muted:#9ea7d1;
+  }
+  *{box-sizing:border-box} html,body{height:100%}
+  body{
+    margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Arial;
+    color:var(--text);
+    background:
+      radial-gradient(1100px 700px at 110% -10%, #1a1a44 0%, transparent 60%),
+      radial-gradient(900px 600px at -10% 110%, #0b335a 0%, transparent 60%),
+      linear-gradient(180deg,var(--bg),var(--bg2));
+    overflow-x:hidden; display:flex; align-items:center; justify-content:center;
+  }
+  .wrap{width:100%; max-width:980px; padding:18px}
+  .card{
+    background:var(--glass); border:1px solid var(--stroke); border-radius:20px; padding:18px;
+    box-shadow:0 0 0 2px rgba(122,92,255,.12) inset, 0 28px 60px rgba(0,0,0,.45), 0 0 38px #6c57ff26;
+    backdrop-filter: blur(8px);
+  }
+  header{display:flex; align-items:center; justify-content:space-between; gap:12px; padding:6px 6px 14px; border-bottom:1px solid rgba(255,255,255,.06)}
+  .brand{display:flex; align-items:center; gap:12px}
+  .logo{width:42px;height:42px;border-radius:10px;background:
+    radial-gradient(circle at 30% 30%, var(--neon2), #6cf 60%, transparent 61%),
+    radial-gradient(circle at 70% 70%, var(--neon), #7453ff 60%, transparent 61%);
+    box-shadow:0 0 14px var(--neon2), 0 0 18px #7a5cff88}
+  .brand h1{margin:0;font-size:20px;letter-spacing:.4px}
+  .brand small{display:block;color:var(--muted);margin-top:2px}
+  .pill{display:inline-flex;align-items:center;gap:8px;padding:6px 10px;border-radius:999px;background:
+    linear-gradient(90deg, rgba(122,92,255,.2), rgba(25,230,255,.2));
+    border:1px solid rgba(122,92,255,.35);color:var(--muted);font-size:12px}
+  .grid{display:grid;gap:16px;margin-top:12px;grid-template-columns:1.15fr .9fr}
+  @media (max-width:980px){.grid{grid-template-columns:1fr}}
+  .stage{
+    position:relative;background:linear-gradient(180deg,#0d1030,#0d1030) padding-box,
+    linear-gradient(130deg,#31366d,#161b48) border-box;border:1px solid transparent;border-radius:18px;
+    padding:16px;display:flex;align-items:center;justify-content:center
+  }
+  .pin{position:absolute;top:10px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:14px solid transparent;border-right:14px solid transparent;border-top:22px solid var(--neon2);filter:drop-shadow(0 0 8px var(--neon2)) drop-shadow(0 0 14px #00e7ff88)}
+  canvas{width:100%;height:auto;max-width:560px}
+  .side{background:linear-gradient(180deg,#0d1030,#0d1030) padding-box,linear-gradient(130deg,#31366d,#161b48) border-box;border:1px solid transparent;border-radius:18px;padding:16px;display:flex;flex-direction:column;gap:12px}
+  .result{min-height:126px;border:1px dashed #3a3f79;border-radius:12px;display:flex;align-items:center;justify-content:center;text-align:center;padding:14px;background:#0c103088}
+  .result h2{margin:0;font-size:22px}
+  .result small{display:block;color:var(--muted);margin-top:4px}
+  .badge{display:inline-grid;place-items:center;width:64px;height:64px;border-radius:50%;
+    background:radial-gradient(circle at 30% 30%, #22ffd3, #7a5cff 70%);color:#0b0b12;font-weight:900;font-size:18px;margin:0 auto 10px;box-shadow:0 0 16px rgba(25,230,255,.35)}
+  .btns{display:flex;flex-wrap:wrap;gap:10px}
+  .btn{appearance:none;border:none;cursor:pointer;padding:14px 16px;border-radius:12px;font-weight:800;letter-spacing:.2px;font-size:16px;transition:transform .06s ease, opacity .2s ease, box-shadow .2s ease}
+  .btn:active{transform:translateY(1px)}
+  .btn-primary{color:#0b0b12;background:linear-gradient(90deg,#7a5cff 0%,#19e6ff 100%);box-shadow:0 8px 26px rgba(122,92,255,.35), inset 0 0 0 1px rgba(255,255,255,.12)}
+  .btn-primary[disabled]{opacity:.6;cursor:not-allowed;filter:grayscale(.2)}
+  .btn-whats{color:#062b17;background:linear-gradient(180deg,#19d27c,#13b461);box-shadow:0 8px 24px #1adc7f44, inset 0 0 0 1px rgba(255,255,255,.08);display:inline-flex;align-items:center;gap:10px}
+  .btn-ghost{color:#cbd3ff;background:#161943;border:1px solid #2c3265}
+  .meta{font-size:14px;color:#cfd4ff;text-align:center;margin-top:6px}
+  .stock{font-size:12px;color:#9ea7d1;text-align:center;margin-top:4px}
+  .foot{margin-top:12px;text-align:center;color:var(--muted);font-size:12px}
+  .foot b{color:#dfe4ff}
+  .toast{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);background:#12122a;border:1px solid #2c2d5e;color:#cfd4ff;padding:10px 14px;border-radius:10px;font-size:14px;box-shadow:0 8px 30px rgba(0,0,0,.45);opacity:0;pointer-events:none;transition:opacity .25s ease}
+  .toast.show{opacity:1}
+  @media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
+</style>
 </head>
 <body>
-    <div class="container">
-        <img src="background.png" alt="Promoción BET300">
-        <a class="cta-button" href="https://wa.me/5491126980720" target="_blank">RECLAMAR</a>
+<div class="wrap">
+  <div class="card">
+    <header>
+      <div class="brand">
+        <div class="logo" aria-hidden="true"></div>
+        <div>
+          <h1 style="margin:0">BET300</h1>
+          <small>Ruleta de BONUS • Gira y ganá 20%–50%</small>
+        </div>
+      </div>
+      <span class="pill">Bonus aplicable <b>con tu próxima carga</b></span>
+    </header>
+
+    <div class="grid">
+      <!-- Ruleta -->
+      <section class="stage" aria-label="Ruleta de bonus BET300">
+        <div class="pin" aria-hidden="true"></div>
+        <canvas id="wheel" width="640" height="640"></canvas>
+      </section>
+
+      <!-- Lateral / Acciones -->
+      <aside class="side">
+        <div class="result" id="resultBox" aria-live="polite">
+          <div>
+            <div class="badge" id="badge">%</div>
+            <h2 id="resultTitle">🎯 Tenés 1 giro disponible</h2>
+            <small id="resultNote">El bonus se acredita con tu <b>próxima carga mínima</b>.</small>
+          </div>
+        </div>
+
+        <div class="btns">
+          <button id="spinBtn" class="btn btn-primary">🌀 Girar ruleta</button>
+          <button id="claimBtn" class="btn btn-whats" disabled>📲 Reclamar bonus con mi carga</button>
+          <button id="resetBtn" class="btn btn-ghost" title="Solo para test">Reiniciar prueba</button>
+        </div>
+
+        <!-- Urgencia (contador del día) -->
+        <div class="meta">⏳ Promo activa HOY: <b><span id="countdown">--:--:--</span></b></div>
+        <!-- Escasez (cupos restantes) -->
+        <div class="stock">🎁 Bonos disponibles hoy: <b><span id="slotsLeft">18</span></b></div>
+
+        <div class="foot">
+          Bonus válido por 1 uso • <b>Se aplica con la próxima carga</b> (mínimo según operador). Vigencia: hoy. Sujeto a validación antifraude.
+        </div>
+      </aside>
     </div>
+  </div>
+</div>
+
+<div id="toast" class="toast">Ya usaste tu giro de hoy. Volvé mañana ✨</div>
+
+<script>
+/* ========== CONFIG ========== */
+const CONFIG = {
+  waDefault: "5491126980720",  // default si no viene ?wapp=
+  baseMsg : "Hola 👋 Quiero reclamar mi bonus",
+  minInfo : "aplicable con mi próxima carga mínima",
+  prizes: [
+    {label:"20%", weight:36},
+    {label:"25%", weight:26},
+    {label:"30%", weight:20},
+    {label:"40%", weight:12},
+    {label:"50%", weight:6}
+  ],
+  dailyLockHours: 24,
+  colors: ["#0bd0ff","#7a5cff","#00f2a9","#ff4dd2","#ffd166"]
+};
+/* ========== Helpers ========== */
+const $ = q => document.querySelector(q);
+const spinBtn=$("#spinBtn"), claimBtn=$("#claimBtn"), resetBtn=$("#resetBtn");
+const resultBox=$("#resultBox"), resultTitle=$("#resultTitle"), resultNote=$("#resultNote"), badgeEl=$("#badge");
+const countdown=$("#countdown"), slotsLeftEl=$("#slotsLeft"), toast=$("#toast");
+const canvas=$("#wheel"), ctx=canvas.getContext("2d");
+const W=canvas.width, H=canvas.height, cx=W/2, cy=H/2, r=Math.min(W,H)/2-18;
+
+const params = new URLSearchParams(location.search);
+const WAPP = (params.get("wapp") || CONFIG.waDefault).replace(/[^\d]/g,"");
+const SRC  = params.get("src") ? ` | src:${params.get("src")}` : "";
+
+/* ========== Ruleta ========== */
+function drawWheel(angleOffset=0){
+  const SEGMENTS = CONFIG.prizes.length;
+  const segAngle = 2*Math.PI / SEGMENTS;
+  ctx.clearRect(0,0,W,H);
+  for(let i=0;i<SEGMENTS;i++){
+    ctx.save(); ctx.translate(cx,cy); ctx.rotate(i*segAngle + angleOffset);
+    ctx.beginPath(); ctx.moveTo(0,0); ctx.arc(0,0,r,0,segAngle); ctx.closePath();
+    ctx.fillStyle = CONFIG.colors[i % CONFIG.colors.length]; ctx.globalAlpha=.95; ctx.fill();
+    ctx.strokeStyle="rgba(255,255,255,.12)"; ctx.lineWidth=2; ctx.stroke();
+    ctx.rotate(segAngle/2); ctx.fillStyle="#0b0b12"; ctx.font="900 54px Outfit, system-ui"; ctx.textAlign="right";
+    ctx.shadowColor="rgba(255,255,255,.24)"; ctx.shadowBlur=2; ctx.fillText(CONFIG.prizes[i].label, r-30, 18);
+    ctx.restore();
+  }
+  ctx.beginPath(); ctx.arc(cx,cy,r+4,0,2*Math.PI); ctx.strokeStyle="rgba(122,92,255,.7)"; ctx.lineWidth=6; ctx.stroke();
+}
+drawWheel();
+
+function weightedPick(items){
+  const total = items.reduce((a,b)=>a+b.weight,0);
+  let rnd = Math.random()*total;
+  for(const it of items){ if(rnd<it.weight) return it.label; rnd-=it.weight; }
+  return items[0].label;
+}
+
+const LOCK_KEY="ruleta_lock_ts_bet300";
+function canSpin(){ const ts=Number(localStorage.getItem(LOCK_KEY)||0); return ((Date.now()-ts)/(1000*60*60))>=CONFIG.dailyLockHours; }
+function setLock(){ localStorage.setItem(LOCK_KEY, Date.now()); }
+function showToast(msg){ toast.textContent=msg; toast.classList.add("show"); setTimeout(()=>toast.classList.remove("show"),2000); }
+
+/* ========== Spin flow ========== */
+let spinning=false, currentAngle=0, lastPrize=null;
+function spin(){
+  if(spinning) return;
+  if(!canSpin()){ showToast("Ya usaste tu giro de hoy. Volvé mañana ✨"); return; }
+  spinning=true; spinBtn.disabled=true; claimBtn.disabled=true;
+
+  const prize = weightedPick(CONFIG.prizes); lastPrize=prize;
+  const SEGMENTS=CONFIG.prizes.length, segAngle=2*Math.PI/SEGMENTS;
+  const idx = CONFIG.prizes.findIndex(p=>p.label===prize);
+  const targetAngle = (Math.PI/2) - (idx*segAngle + segAngle/2);
+  const extraTurns = 4 + Math.floor(Math.random()*2);
+  const dest = currentAngle + extraTurns*2*Math.PI + targetAngle;
+
+  const duration = 2600 + Math.random()*800; const start = performance.now(); const from = currentAngle;
+  const ease = t=>1-Math.pow(1-t,3);
+
+  function frame(now){
+    const p=Math.min(1,(now-start)/duration);
+    currentAngle = from + (dest-from)*ease(p);
+    drawWheel(currentAngle);
+    if(p<1){ requestAnimationFrame(frame); }
+    else{ spinning=false; currentAngle=currentAngle%(2*Math.PI); onStop(prize); setLock(); }
+  }
+  requestAnimationFrame(frame);
+}
+
+function onStop(prize){
+  badgeEl.textContent = prize.replace("%","");
+  resultTitle.innerHTML = `🎉 ¡Felicitaciones! Ganaste <b>${prize}</b> de BONUS`;
+  resultNote.innerHTML   = `El bonus se acredita con tu <b>próxima carga mínima</b>.`;
+
+  // Micro pulso visual
+  resultBox.animate(
+    [{boxShadow:`0 0 0 0 rgba(22,213,122,0)`},{boxShadow:`0 0 0 10px rgba(22,213,122,.25)`},{boxShadow:`0 0 0 0 rgba(22,213,122,0)`}],
+    {duration:700,easing:"ease-out"}
+  );
+
+  // Vibración leve (móvil)
+  if (navigator.vibrate) { navigator.vibrate(20); }
+
+  // Enlace a WhatsApp
+  const msg = `${CONFIG.baseMsg} ${prize} ${CONFIG.minInfo}${SRC}`;
+  const wa  = `https://wa.me/${WAPP}?text=${encodeURIComponent(msg)}`;
+  claimBtn.onclick = ()=>{ window.location.href = wa; };
+  claimBtn.disabled=false;
+
+  // Baja “cupos” si corresponde
+  if (window._slotsLeft && window._slotsLeft > 4){
+    window._slotsLeft--; slotsLeftEl.textContent = window._slotsLeft;
+  }
+}
+
+spinBtn.addEventListener("click", spin);
+resetBtn.addEventListener("click", ()=>{
+  localStorage.removeItem(LOCK_KEY);
+  lastPrize=null; claimBtn.disabled=true;
+  resultTitle.textContent="🎯 Tenés 1 giro disponible";
+  resultNote.innerHTML=`El bonus se acredita con tu <b>próxima carga mínima</b>.`;
+});
+
+/* ========== Contador (expira hoy) ========== */
+(function countdownTick(){
+  if(!countdown) return;
+  function endOfDay(){
+    const d = new Date(); d.setHours(23,59,59,999); return d.getTime();
+  }
+  function tick(){
+    const t = endOfDay() - Date.now();
+    if(t <= 0){ countdown.textContent = "00:00:00"; return; }
+    const h = Math.floor(t/3_600_000);
+    const m = Math.floor((t%3_600_000)/60_000);
+    const s = Math.floor((t%60_000)/1000);
+    countdown.textContent = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+    requestAnimationFrame(()=>setTimeout(tick, 250));
+  }
+  tick();
+})();
+
+/* ========== Cupos (escasez suave) ========== */
+(function stockSim(){
+  if(!slotsLeftEl) return;
+  const base = 16 + Math.floor(Math.random()*6); // 16–21
+  window._slotsLeft = base;
+  slotsLeftEl.textContent = base;
+  setInterval(()=>{
+    if(window._slotsLeft > 4 && Math.random() < 0.35){
+      window._slotsLeft -= 1;
+      slotsLeftEl.textContent = window._slotsLeft;
+    }
+  }, 7000);
+})();
+</script>
 </body>
 </html>
