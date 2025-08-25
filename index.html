@@ -8,7 +8,7 @@
 <style>
 :root{
   --bg:#0b0f1e; --panel:#121634; --panel2:#0f1330; --border:#1e2150;
-  --text:#e8ebff; --muted:#b7b9d6; --ok:#25D366;
+  --text:#e8ebff; --muted:#b7b9d6; --ok:#25D366; --pointer:#22d3ee;
 }
 *{box-sizing:border-box} html,body{height:100%}
 body{margin:0;color:var(--text);background:var(--bg);font:16px/1.35 system-ui,-apple-system,Segoe UI,Roboto}
@@ -35,7 +35,21 @@ body::before{
 .stage{position:relative;display:flex;align-items:center;justify-content:center}
 .wrap{width:100%;max-width:520px;margin:auto}
 canvas{width:100%;height:auto;display:block}
-.pin{position:absolute;top:10px;left:50%;transform:translateX(-50%);width:28px;height:auto;filter:drop-shadow(0 0 6px rgba(0,0,0,.6))}
+
+/* Indicador (triángulo) que asigna el premio */
+.pointer{
+  position:absolute; top:6px; left:50%; transform:translateX(-50%);
+  width:0; height:0;
+  border-left: 16px solid transparent;
+  border-right:16px solid transparent;
+  border-bottom:26px solid var(--pointer);
+  filter: drop-shadow(0 4px 10px rgba(34,211,238,.35));
+  z-index:2;
+}
+@media (max-width:420px){
+  .pointer{ border-left:12px solid transparent; border-right:12px solid transparent; border-bottom:22px solid var(--pointer); top:4px; }
+}
+
 .panel{background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:16px}
 .center{text-align:center}
 h1,h2,h3,p{margin:0 0 8px} h1{font-size:24px} .muted{color:var(--muted)}
@@ -90,7 +104,9 @@ h1,h2,h3,p{margin:0 0 8px} h1{font-size:24px} .muted{color:var(--muted)}
         <div class="stage">
           <img src="img/glow-frame.svg" alt="" style="position:absolute;inset:0;margin:auto;width:100%;max-width:520px;opacity:.8;pointer-events:none">
           <div class="wrap"><canvas id="wheel" width="620" height="620"></canvas></div>
-          <img class="pin" src="img/pin.svg" alt=""/>
+
+          <!-- 🔺 Indicador: si el centro del segmento queda debajo, ese es el premio -->
+          <div class="pointer" aria-hidden="true"></div>
         </div>
       </div>
 
@@ -160,7 +176,7 @@ wpDirect.href = `https://wa.me/${WP}`;
 function setSize(){
   const dpr = devicePixelRatio || 1;
   const w = Math.min(520, Math.max(300, Math.floor(window.innerWidth*0.9)));
-  cssW = w; // guardar ancho css actual
+  cssW = w; // ancho CSS actual
   wheel.width = Math.floor(w*dpr);
   wheel.height = Math.floor(w*dpr);
   wheel.style.width = w+'px'; wheel.style.height = w+'px';
@@ -175,7 +191,7 @@ function draw(a){
   ctx.clearRect(0,0,wheel.width,wheel.height);
   const n = AMOUNTS.length; const arc = Math.PI*2/n;
 
-  // tamaño de fuente de los montos (ligeramente responsive)
+  // Fuente de los montos (ligeramente responsive)
   const labelFont =
     cssW <= 340 ? "700 22px system-ui,-apple-system,Segoe UI" :
     cssW <= 380 ? "700 26px system-ui,-apple-system,Segoe UI" :
@@ -212,11 +228,12 @@ function draw(a){
   ctx.stroke();
 }
 
-/* Mapear monto -> ángulo (puntero arriba) */
+/* Mapear monto -> ángulo (puntero fijo arriba) */
 function targetAngleFor(amount){
   const idx = AMOUNTS.indexOf(amount);
   const arc = Math.PI*2/AMOUNTS.length;
-  const base = (Math.PI*1.5) - (arc/2); // arriba
+  // El triángulo apunta al TOP (−90°). Ubicamos el centro del segmento ganador en ese ángulo.
+  const base = (Math.PI*1.5) - (arc/2); // centro del primer segmento bajo el puntero
   return base - idx*arc;
 }
 
