@@ -1,12 +1,3 @@
-# Generate updated SVG pack and a landing (index.html) that uses AMOUNTS instead of percentages.
-import os, zipfile, io, textwrap
-from PIL import Image, ImageDraw, ImageFilter
-
-base = "/mnt/data/bet300_pack2"
-img_dir = os.path.join(base, "img")
-os.makedirs(img_dir, exist_ok=True)
-
-# --- SVGs ---
 logo_svg = """<svg width="240" height="80" viewBox="0 0 240 80" xmlns="http://www.w3.org/2000/svg">
   <defs>
     <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="0%">
@@ -327,26 +318,3 @@ if(saved){
 </body>
 </html>
 """
-index_path = os.path.join(base, "index.html")
-with open(index_path, "w", encoding="utf-8") as f:
-    f.write(index_html)
-
-# Create ZIPs:
-svg_zip = "/mnt/data/bet300-svg-pack.zip"
-landing_zip = "/mnt/data/bet300-roulette-amounts-landing.zip"
-
-with zipfile.ZipFile(svg_zip, "w", zipfile.ZIP_DEFLATED) as z:
-    z.write(os.path.join(img_dir, "logo-bet300.svg"), "img/logo-bet300.svg")
-    z.write(os.path.join(img_dir, "pin.svg"), "img/pin.svg")
-    z.write(os.path.join(img_dir, "glow-frame.svg"), "img/glow-frame.svg")
-
-with zipfile.ZipFile(landing_zip, "w", zipfile.ZIP_DEFLATED) as z:
-    z.write(index_path, "index.html")
-    z.write(os.path.join(img_dir, "bg-casino.webp"), "img/bg-casino.webp")
-    # Include SVGs in this pack too, for convenience
-    z.write(os.path.join(img_dir, "logo-bet300.svg"), "img/logo-bet300.svg")
-    z.write(os.path.join(img_dir, "pin.svg"), "img/pin.svg")
-    z.write(os.path.join(img_dir, "glow-frame.svg"), "img/glow-frame.svg")
-
-svg_zip, landing_zip
-
