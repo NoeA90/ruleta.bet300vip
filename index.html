@@ -176,7 +176,7 @@ wpDirect.href = `https://wa.me/${WP}`;
 function setSize(){
   const dpr = devicePixelRatio || 1;
   const w = Math.min(520, Math.max(300, Math.floor(window.innerWidth*0.9)));
-  cssW = w; // ancho CSS actual
+  cssW = w;
   wheel.width = Math.floor(w*dpr);
   wheel.height = Math.floor(w*dpr);
   wheel.style.width = w+'px'; wheel.style.height = w+'px';
@@ -190,13 +190,10 @@ window.addEventListener('resize', ()=>{ clearTimeout(window.__wTo); window.__wTo
 function draw(a){
   ctx.clearRect(0,0,wheel.width,wheel.height);
   const n = AMOUNTS.length; const arc = Math.PI*2/n;
-
-  // Fuente de los montos (ligeramente responsive)
   const labelFont =
-    cssW <= 340 ? "700 22px system-ui,-apple-system,Segoe UI" :
-    cssW <= 380 ? "700 26px system-ui,-apple-system,Segoe UI" :
-    cssW <= 440 ? "700 30px system-ui,-apple-system,Segoe UI" :
-                  "700 36px system-ui,-apple-system,Segoe UI";
+    cssW <= 340 ? "700 22px system-ui" :
+    cssW <= 380 ? "700 26px system-ui" :
+    cssW <= 440 ? "700 30px system-ui" : "700 36px system-ui";
 
   for(let i=0;i<n;i++){
     const s = a + i*arc, e = s + arc;
@@ -210,15 +207,11 @@ function draw(a){
     ctx.fillText(label, r-20, 12); ctx.restore();
   }
 
-  // ===== Centro (proporcional y responsive) =====
-  // móviles angostos ~8–9% del radio; pantallas mayores ~10–11%
+  // círculo central proporcional
   const rCenter =
     cssW <= 360 ? Math.max(26, r * 0.085) :
-    cssW <= 420 ? Math.max(30, r * 0.095) :
-                  Math.max(34, r * 0.105);
-
+    cssW <= 420 ? Math.max(30, r * 0.095) : Math.max(34, r * 0.105);
   const centerStroke = Math.max(2, Math.round(rCenter * 0.08));
-
   ctx.beginPath();
   ctx.arc(cx, cy, rCenter, 0, Math.PI*2);
   ctx.fillStyle = "#0e1230";
@@ -228,31 +221,35 @@ function draw(a){
   ctx.stroke();
 }
 
-/* Mapear monto -> ángulo (puntero fijo arriba) */
-function targetAngleFor(amount){
-  const idx = AMOUNTS.indexOf(amount);
-  const arc = Math.PI*2/AMOUNTS.length;
-  // El triángulo apunta al TOP (−90°). Ubicamos el centro del segmento ganador en ese ángulo.
-  const base = (Math.PI*1.5) - (arc/2); // centro del primer segmento bajo el puntero
-  return base - idx*arc;
-}
-
 /* Spin */
 spinBtn.addEventListener('click', ()=>{
   if(spinning) return;
   if(localStorage.getItem('spin_done')==='1'){ showToast("Ya usaste tu giro de hoy"); return; }
 
   spinning = true; spinBtn.disabled = true;
-  const win = AMOUNTS[Math.floor(Math.random()*AMOUNTS.length)];
-  prize = win;
-  const final = targetAngleFor(win) + Math.PI*2*(5 + Math.random()*1.5);
+  const final = angle + Math.PI*2*(5 + Math.random()*1.5); // giro random
   animateTo(final, 3000, ()=>{
-    setWon(win);
+    const wonAmount = detectPrize(angle);
+    setWon(wonAmount);
     localStorage.setItem('spin_done','1');
-    localStorage.setItem('spin_amount', String(win));
+    localStorage.setItem('spin_amount', String(wonAmount));
     spinning = false;
   });
 });
+
+/* Detectar premio según el ángulo final y el puntero arriba */
+function detectPrize(a){
+  const n = AMOUNTS.length;
+  const arc = Math.PI*2/n;
+  // normalizar ángulo en [0,2π)
+  const norm = (a % (2*Math.PI) + 2*Math.PI) % (2*Math.PI);
+  // ángulo que apunta el puntero (arriba, -90°)
+  const pointerAngle = Math.PI * 1.5;
+  // desplazamiento relativo
+  const diff = (norm - pointerAngle + 2*Math.PI) % (2*Math.PI);
+  const idx = Math.floor(diff / arc);
+  return AMOUNTS[(n - idx - 1 + n) % n];
+}
 
 /* Animación */
 function animateTo(target, ms, cb){
@@ -313,5 +310,6 @@ if(saved){
   claimBtn.onclick = ()=> location.href = `https://wa.me/${WP}?text=${encodeURIComponent(msg)}`;
 }
 </script>
+
 </body>
 </html>
