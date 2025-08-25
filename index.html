@@ -1,1 +1,352 @@
+# Generate updated SVG pack and a landing (index.html) that uses AMOUNTS instead of percentages.
+import os, zipfile, io, textwrap
+from PIL import Image, ImageDraw, ImageFilter
+
+base = "/mnt/data/bet300_pack2"
+img_dir = os.path.join(base, "img")
+os.makedirs(img_dir, exist_ok=True)
+
+# --- SVGs ---
+logo_svg = """<svg width="240" height="80" viewBox="0 0 240 80" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#64D1FF"/>
+      <stop offset="50%" stop-color="#7C56FF"/>
+      <stop offset="100%" stop-color="#ff7cf7"/>
+    </linearGradient>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="3.5" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  <rect x="0" y="0" width="240" height="80" fill="none"/>
+  <text x="12" y="52" font-family="Montserrat, Poppins, Arial" font-weight="800" font-size="42" fill="url(#g)" filter="url(#glow)">BET300</text>
+</svg>"""
+pin_svg = """<svg width="28" height="28" viewBox="0 0 28 28" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="pg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fff89a"/>
+      <stop offset="1" stop-color="#ffd12e"/>
+    </linearGradient>
+    <filter id="gl" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="1.5" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <polygon points="14,2 22,18 6,18" fill="url(#pg)" stroke="#413300" stroke-width="1.2" filter="url(#gl)"/>
+</svg>"""
+glow_svg = """<svg width="520" height="520" viewBox="0 0 520 520" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="rg" cx="50%" cy="50%" r="50%">
+      <stop offset="50%" stop-color="#58baff" stop-opacity="0.35"/>
+      <stop offset="90%" stop-color="#8b65ff" stop-opacity="0.15"/>
+      <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <circle cx="260" cy="260" r="250" fill="url(#rg)"/>
+</svg>"""
+
+with open(os.path.join(img_dir, "logo-bet300.svg"), "w") as f: f.write(logo_svg)
+with open(os.path.join(img_dir, "pin.svg"), "w") as f: f.write(pin_svg)
+with open(os.path.join(img_dir, "glow-frame.svg"), "w") as f: f.write(glow_svg)
+
+# Optional background (WebP) to make it pretty out of the box
+bg_w, bg_h = 1600, 1000
+bg = Image.new("RGB", (bg_w, bg_h), (11, 15, 30))
+overlay = Image.new("RGBA", (bg_w, bg_h), (0,0,0,0))
+d = ImageDraw.Draw(overlay)
+# soft blobs
+for cx, cy, r, col in [(420,300,380,(100,209,255,55)), (1200,220,420,(124,86,255,55)), (900,720,360,(255,124,247,45))]:
+    for rr in range(r, 0, -12):
+        a = int( col[3] * (rr/r) )
+        d.ellipse((cx-rr, cy-rr, cx+rr, cy+rr), fill=(col[0],col[1],col[2], a))
+bg = Image.alpha_composite(bg.convert("RGBA"), overlay).convert("RGB")
+bg_path = os.path.join(img_dir, "bg-casino.webp")
+bg.save(bg_path, "WEBP", quality=88, method=6)
+
+# --- Landing (single file index.html) with AMOUNTS ---
+index_html = """<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>BET300 · Ruleta de Bonos</title>
+<meta name="theme-color" content="#0b0f1e"/>
+<style>
+:root{
+  --bg:#0b0f1e; --panel:#121634; --panel2:#0f1330; --border:#1e2150;
+  --text:#e8ebff; --muted:#b7b9d6; --ok:#25D366;
+}
+*{box-sizing:border-box} html,body{height:100%}
+body{margin:0;color:var(--text);background:var(--bg);font:16px/1.35 system-ui,-apple-system,Segoe UI,Roboto}
+body::before{
+  content:"";position:fixed;inset:0;z-index:-2;
+  background: radial-gradient(900px 500px at 50% -10%, rgba(101,74,255,.25), transparent),
+              radial-gradient(700px 350px at 100% 0%, rgba(0,209,255,.18), transparent),
+              linear-gradient(180deg,#0b0f1e 0%,#0b0f1e 60%,#0a0d20 100%);
+}
+.bg{position:fixed;inset:0;z-index:-3;opacity:.24;object-fit:cover;width:100%;height:100%}
+.container{max-width:980px;margin:0 auto;padding:18px 14px 28px}
+.card{background: radial-gradient(120% 100% at 50% 0%, rgba(124,77,255,.08), rgba(0,0,0,0)) , var(--panel2);
+  border:1px solid var(--border);border-radius:18px;padding:18px;box-shadow:0 15px 40px rgba(0,0,0,.35)}
+.head{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.brand{height:28px;width:auto;filter:drop-shadow(0 2px 8px rgba(0,0,0,.4))}
+.pill{background:linear-gradient(90deg,rgba(124,77,255,.15),rgba(0,209,255,.15));border:1px solid var(--border);
+  border-radius:999px;padding:6px 10px;font-size:12px;color:var(--muted)}
+.grid{display:grid;gap:16px;grid-template-columns:minmax(0,1fr)}
+@media(min-width:900px){.grid{grid-template-columns:1.15fr .85fr}}
+.stage{position:relative;display:flex;align-items:center;justify-content:center}
+.wrap{width:100%;max-width:520px;margin:auto}
+canvas{width:100%;height:auto;display:block}
+.pin{position:absolute;top:10px;left:50%;transform:translateX(-50%);width:28px;height:auto;filter:drop-shadow(0 0 6px rgba(0,0,0,.6))}
+.panel{background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:16px}
+.center{text-align:center}
+h1,h2,h3,p{margin:0 0 8px} h1{font-size:24px} .muted{color:var(--muted)}
+.stat{display:flex;align-items:center;gap:12px;justify-content:center;margin:8px 0 14px}
+.badge{width:72px;height:46px;border-radius:12px;background:radial-gradient(100% 100% at 50% 0%, rgba(0,209,255,.35), rgba(124,77,255,.35));
+  display:grid;place-items:center;font-weight:800;font-size:18px;box-shadow:inset 0 0 10px rgba(124,77,255,.35)}
+.row{display:flex;gap:10px}.btn{appearance:none;border:none;cursor:pointer;padding:12px 16px;border-radius:12px;font-weight:700;
+  background:linear-gradient(90deg,#6c59ff,#00d1ff);color:#0a1020;width:100%;box-shadow:0 8px 20px rgba(0,0,0,.35)}
+.btn.secondary{background:#1a1f4a;color:var(--text);border:1px solid var(--border)} .btn:disabled{opacity:.55;cursor:not-allowed}
+.btn.ok{background:var(--ok);color:#0b0f1e}
+.cta{display:flex;align-items:center;gap:12px;margin-top:14px;padding:12px;border:1px dashed var(--border);border-radius:12px;
+  background:linear-gradient(180deg,rgba(124,77,255,.06),rgba(0,0,0,0))}
+.agent{width:40px;height:40px;border-radius:50%;object-fit:cover}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#10162c;color:#e8ebff;border:1px solid var(--border);
+  border-radius:10px;padding:10px 14px;font-size:14px;opacity:0;transition:.25s;box-shadow:0 10px 30px rgba(0,0,0,.45)}
+.toast.show{opacity:1}
+.confetti{position:fixed;inset:0;pointer-events:none;z-index:40}
+.confetti i{position:absolute;width:10px;height:14px;opacity:0;top:-20px;background:linear-gradient(#ffea00,#ff3d7f);
+  animation:drop 1.6s linear forwards;transform:rotate(0deg);border-radius:2px}
+@keyframes drop{8%{opacity:1}100%{transform:translateY(110vh) rotate(360deg);opacity:0}}
+</style>
+</head>
+<body>
+<img class="bg" src="img/bg-casino.webp" alt="" />
+<div id="confetti" class="confetti" aria-hidden="true"></div>
+<div id="toast" class="toast">Ya usaste tu giro de hoy</div>
+
+<div class="container">
+  <div class="card">
+    <div class="head">
+      <img class="brand" src="img/logo-bet300.svg" alt="BET300" onerror="this.outerHTML='<strong>BET300</strong>'">
+      <span class="pill">Ruleta de bonos · se acredita con la próxima carga</span>
+    </div>
+
+    <div class="grid">
+      <div class="panel">
+        <div class="stage">
+          <img src="img/glow-frame.svg" alt="" style="position:absolute;inset:0;margin:auto;width:100%;max-width:520px;opacity:.8;pointer-events:none">
+          <div class="wrap"><canvas id="wheel" width="620" height="620"></canvas></div>
+          <img class="pin" src="img/pin.svg" alt=""/>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="center">
+          <div class="stat">
+            <div class="badge" id="badge">$0</div>
+            <div>
+              <h1 id="title">Tenés 1 giro disponible</h1>
+              <p class="muted" id="subtitle">Los bonos se acreditan con tu <b>próxima carga mínima</b>.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="row" style="margin-top:8px">
+          <button id="spinBtn" class="btn">🎯 Girar ruleta</button>
+          <button id="resetBtn" class="btn secondary">Reiniciar prueba</button>
+        </div>
+
+        <button id="claimBtn" class="btn ok" style="margin-top:10px" disabled>📲 Reclamar por WhatsApp</button>
+
+        <div class="cta">
+          <img class="agent" src="img/agent.png" alt="Agente" onerror="this.style.display='none'">
+          <div><strong>¿Dudas?</strong><br><span class="muted">Soporte responde en 1–2 min</span></div>
+          <a id="wpDirect" class="btn ok" style="margin-left:auto;padding:10px 12px" target="_blank" rel="noopener">Abrir WhatsApp</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ========= Config ========= */
+const AMOUNTS = [2000,3000,4000,5000,6000,7000,8000,10000];
+const COLORS  = ["#44e0ff","#7a5bff","#16e2b6","#ff6ad5","#ffd166","#4be1a0","#8ab6ff","#ff9bd1"];
+const WP_NUMBERS = {
+  principal: "5491126980720",
+  pc1: "5491111111111", pc2: "5491222222222", pc3: "5491333333333"
+};
+const WP_MSG = "Hola, gané $%AMOUNT% en fichas extra en la ruleta y quiero reclamarlo con mi próxima carga.";
+
+/* ========= Estado ========= */
+const wheel = document.getElementById('wheel');
+const ctx = wheel.getContext('2d');
+const spinBtn = document.getElementById('spinBtn');
+const resetBtn = document.getElementById('resetBtn');
+const claimBtn = document.getElementById('claimBtn');
+const badge = document.getElementById('badge');
+const title = document.getElementById('title');
+const subtitle = document.getElementById('subtitle');
+const toast = document.getElementById('toast');
+const confetti = document.getElementById('confetti');
+const wpDirect = document.getElementById('wpDirect');
+
+let angle = 0, spinning = false, prize = null, cx, cy, r;
+
+/* WhatsApp destino por ?pc= */
+const params = new URLSearchParams(location.search);
+const pc = params.get('pc');
+let WP = WP_NUMBERS.principal;
+if(pc==='1') WP = WP_NUMBERS.pc1 || WP;
+if(pc==='2') WP = WP_NUMBERS.pc2 || WP;
+if(pc==='3') WP = WP_NUMBERS.pc3 || WP;
+wpDirect.href = `https://wa.me/${WP}`;
+
+/* Responsive canvas */
+function setSize(){
+  const dpr = devicePixelRatio || 1;
+  const w = Math.min(520, Math.max(300, Math.floor(window.innerWidth*0.9)));
+  wheel.width = Math.floor(w*dpr);
+  wheel.height = Math.floor(w*dpr);
+  wheel.style.width = w+'px'; wheel.style.height = w+'px';
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  cx = wheel.width/dpr/2; cy = wheel.height/dpr/2; r = Math.min(cx,cy) - 10;
+  draw(angle);
+}
+window.addEventListener('resize', ()=>{ clearTimeout(window.__wTo); window.__wTo=setTimeout(setSize,120) });
+
+/* Dibujo ruleta */
+function draw(a){
+  ctx.clearRect(0,0,wheel.width,wheel.height);
+  const n = AMOUNTS.length; const arc = Math.PI*2/n;
+  for(let i=0;i<n;i++){
+    const s = a + i*arc, e = s + arc;
+    ctx.beginPath(); ctx.moveTo(cx,cy); ctx.arc(cx,cy,r,s,e); ctx.closePath();
+    ctx.fillStyle = COLORS[i % COLORS.length]; ctx.fill();
+    ctx.strokeStyle = "rgba(10,15,35,.35)"; ctx.lineWidth = 2; ctx.stroke();
+
+    const label = "$" + AMOUNTS[i].toLocaleString("es-AR");
+    ctx.save(); ctx.translate(cx,cy); ctx.rotate(s + arc/2);
+    ctx.textAlign="right"; ctx.fillStyle="#091024"; ctx.font="700 36px system-ui,-apple-system,Segoe UI";
+    ctx.fillText(label, r-20, 12); ctx.restore();
+  }
+  ctx.beginPath(); ctx.arc(cx,cy,60,0,Math.PI*2);
+  ctx.fillStyle="#0e1230"; ctx.fill();
+  ctx.strokeStyle="rgba(124,77,255,.6)"; ctx.lineWidth=4; ctx.stroke();
+}
+
+/* Mapear monto -> ángulo */
+function targetAngleFor(amount){
+  const idx = AMOUNTS.indexOf(amount);
+  const arc = Math.PI*2/AMOUNTS.length;
+  const base = (Math.PI*1.5) - (arc/2); // arriba
+  return base - idx*arc;
+}
+
+/* Spin */
+spinBtn.addEventListener('click', ()=>{
+  if(spinning) return;
+  if(localStorage.getItem('spin_done')==='1'){ showToast("Ya usaste tu giro de hoy"); return; }
+
+  spinning = true; spinBtn.disabled = true;
+  const win = AMOUNTS[Math.floor(Math.random()*AMOUNTS.length)];
+  prize = win;
+  const final = targetAngleFor(win) + Math.PI*2*(5 + Math.random()*1.5);
+  animateTo(final, 3000, ()=>{
+    setWon(win);
+    localStorage.setItem('spin_done','1');
+    localStorage.setItem('spin_amount', String(win));
+    spinning = false;
+  });
+});
+
+/* Animación */
+function animateTo(target, ms, cb){
+  const start = performance.now(); const from = angle;
+  (function loop(t){
+    const k = Math.min(1,(t-start)/ms); const ease = 1 - Math.pow(1-k,3);
+    angle = from + (target-from)*ease; draw(angle);
+    if(k<1) requestAnimationFrame(loop); else cb&&cb();
+  })(start);
+}
+
+/* Estado ganado */
+function setWon(amount){
+  const fmt = "$"+amount.toLocaleString("es-AR");
+  badge.textContent = fmt;
+  title.textContent = "🎉 ¡Premio obtenido!";
+  subtitle.innerHTML = `Recibís <b>${fmt} en fichas extra</b> con tu próxima carga.`;
+  claimBtn.disabled = false;
+  const msg = WP_MSG.replace("%AMOUNT%", amount.toLocaleString("es-AR"));
+  claimBtn.onclick = ()=> location.href = `https://wa.me/${WP}?text=${encodeURIComponent(msg)}`;
+  wpDirect.href = `https://wa.me/${WP}?text=${encodeURIComponent("Hola, tengo una consulta sobre mi premio.")}`;
+  confettiBurst();
+}
+
+/* Reset (solo test) */
+resetBtn.addEventListener('click', ()=>{
+  localStorage.removeItem('spin_done'); localStorage.removeItem('spin_amount');
+  prize=null; angle=0; draw(angle);
+  badge.textContent="$0"; title.textContent="Tenés 1 giro disponible";
+  subtitle.innerHTML="Los bonos se acreditan con tu <b>próxima carga mínima</b>.";
+  claimBtn.disabled=true; spinBtn.disabled=false;
+});
+
+/* UI utils */
+function showToast(msg){ toast.textContent=msg; toast.classList.add('show'); setTimeout(()=>toast.classList.remove('show'), 1800); }
+function confettiBurst(){
+  confetti.innerHTML='';
+  const n = 26;
+  for(let i=0;i<n;i++){
+    const p = document.createElement('i');
+    p.style.left = (Math.random()*100)+'vw';
+    p.style.animationDelay = (Math.random()*0.5)+'s';
+    p.style.background = Math.random()<.5 ? 'linear-gradient(#80ffea,#4e9cff)' : 'linear-gradient(#ffd166,#ff3d7f)';
+    confetti.appendChild(p);
+  }
+  setTimeout(()=> confetti.innerHTML='', 1800);
+}
+
+/* Init */
+setSize();
+const saved = parseInt(localStorage.getItem('spin_amount')||'0',10);
+if(saved){
+  badge.textContent = "$"+saved.toLocaleString("es-AR");
+  title.textContent = "🎉 ¡Premio obtenido!";
+  subtitle.innerHTML = `Recibís <b>$${saved.toLocaleString("es-AR")} en fichas extra</b> con tu próxima carga.`;
+  claimBtn.disabled = false;
+  const msg = WP_MSG.replace("%AMOUNT%", saved.toLocaleString("es-AR"));
+  claimBtn.onclick = ()=> location.href = `https://wa.me/${WP}?text=${encodeURIComponent(msg)}`;
+}
+</script>
+</body>
+</html>
+"""
+index_path = os.path.join(base, "index.html")
+with open(index_path, "w", encoding="utf-8") as f:
+    f.write(index_html)
+
+# Create ZIPs:
+svg_zip = "/mnt/data/bet300-svg-pack.zip"
+landing_zip = "/mnt/data/bet300-roulette-amounts-landing.zip"
+
+with zipfile.ZipFile(svg_zip, "w", zipfile.ZIP_DEFLATED) as z:
+    z.write(os.path.join(img_dir, "logo-bet300.svg"), "img/logo-bet300.svg")
+    z.write(os.path.join(img_dir, "pin.svg"), "img/pin.svg")
+    z.write(os.path.join(img_dir, "glow-frame.svg"), "img/glow-frame.svg")
+
+with zipfile.ZipFile(landing_zip, "w", zipfile.ZIP_DEFLATED) as z:
+    z.write(index_path, "index.html")
+    z.write(os.path.join(img_dir, "bg-casino.webp"), "img/bg-casino.webp")
+    # Include SVGs in this pack too, for convenience
+    z.write(os.path.join(img_dir, "logo-bet300.svg"), "img/logo-bet300.svg")
+    z.write(os.path.join(img_dir, "pin.svg"), "img/pin.svg")
+    z.write(os.path.join(img_dir, "glow-frame.svg"), "img/glow-frame.svg")
+
+svg_zip, landing_zip
 
