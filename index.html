@@ -85,31 +85,48 @@ h1,h2,h3,p{margin:0 0 8px} h1{font-size:24px} .muted{color:var(--muted)}
 .btn.secondary{background:#1a1f4a;color:var(--text);border:1px solid var(--border)}
 .btn:disabled{opacity:.55;cursor:not-allowed}
 .btn.ok{background:var(--ok);color:#0b0f1e}
-.btn.play{background:linear-gradient(90deg,#ffd166,#ff7ab6);color:#0a1020}
 
-/* Caja promo */
+/* ===== Reestilizado bloque promo + botón plataforma ===== */
 .promo{
-  display:flex;align-items:center;gap:10px;margin-top:10px;padding:12px;border:1px dashed var(--border);border-radius:12px;
-  background:linear-gradient(180deg,rgba(255,204,0,.07),rgba(0,0,0,0))
+  display:grid;
+  grid-template-columns: 1fr minmax(200px, 260px);
+  align-items:center;
+  gap:12px;
+  margin-top:10px;
+  padding:12px;
+  border:1px dashed var(--border);
+  border-radius:12px;
+  background:linear-gradient(180deg,rgba(255,204,0,.07),rgba(0,0,0,0));
 }
 .promo.expired{border-color:rgba(255,107,107,.5);background:linear-gradient(180deg,rgba(255,107,107,.07),rgba(0,0,0,0))}
 .promo .dot{width:8px;height:8px;border-radius:50%;background:var(--alert)}
 .promo.expired .dot{background:var(--danger)}
 
-/* Toast & confetti */
-.toast{
-  position:fixed;left:50%;bottom:24px;transform:translateX(-50%);
-  background:#10162c;color:#e8ebff;border:1px solid var(--border);
-  border-radius:10px;padding:10px 14px;font-size:14px;opacity:0;transition:.25s;box-shadow:0 10px 30px rgba(0,0,0,.45)
+.promo .copy{display:grid;gap:4px}
+.promo .eyebrow{
+  display:inline-block;
+  padding:2px 8px;
+  border-radius:999px;
+  border:1px solid rgba(255,204,0,.35);
+  background:rgba(255,204,0,.12);
+  color:#ffe27a; font-weight:700; font-size:12px; width:max-content;
 }
-.toast.show{opacity:1}
-.confetti{position:fixed;inset:0;pointer-events:none;z-index:40}
-.confetti i{
-  position:absolute;width:10px;height:14px;opacity:0;top:-20px;
-  background:linear-gradient(#ffea00,#ff3d7f);
-  animation:drop 1.6s linear forwards;transform:rotate(360deg);border-radius:2px
+
+/* Botón plataforma mejorado */
+.btn.play{
+  display:inline-flex; align-items:center; justify-content:center; gap:10px;
+  padding:14px 16px; border-radius:12px; font-weight:800;
+  background:linear-gradient(90deg,#ffd166,#ff7ab6); color:#0a1020;
+  text-align:center; box-shadow:0 8px 20px rgba(0,0,0,.25);
 }
-@keyframes drop{8%{opacity:1}100%{transform:translateY(110vh) rotate(360deg);opacity:0}}
+.btn.play .icon{font-size:18px; line-height:1}
+.btn.play .label{line-height:1.1}
+
+/* Responsive: en mobile se apila y el botón ocupa todo el ancho */
+@media (max-width:520px){
+  .promo{grid-template-columns:1fr; gap:10px}
+  .btn.play{width:100%}
+}
 </style>
 </head>
 <body>
@@ -153,14 +170,20 @@ h1,h2,h3,p{margin:0 0 8px} h1{font-size:24px} .muted{color:var(--muted)}
 
         <button id="claimBtn" class="btn ok" style="margin-top:10px" disabled>📲 Reclamar por WhatsApp</button>
 
+        <!-- ===== BLOQUE PROMO NUEVO ===== -->
         <div class="promo" id="promoBox">
           <span class="dot" aria-hidden="true"></span>
-          <div style="flex:1">
-            <strong>Bonos especiales por tiempo limitado.</strong><br>
+          <div class="copy">
+            <span class="eyebrow">Bonos especiales</span>
+            <strong>Tiempo limitado.</strong>
             <span class="muted">Accedé ahora y participá antes de que termine.</span>
           </div>
-          <a id="playNow" class="btn play" style="margin-left:auto;padding:10px 12px;white-space:nowrap" target="_blank" rel="noopener">🎮 Entrar a la plataforma</a>
+          <a id="playNow" class="btn play" target="_blank" rel="noopener">
+            <span class="icon">🎮</span>
+            <span class="label">Entrar a la plataforma</span>
+          </a>
         </div>
+        <!-- ================================= -->
       </div>
     </div>
   </div>
@@ -171,17 +194,17 @@ h1,h2,h3,p{margin:0 0 8px} h1{font-size:24px} .muted{color:var(--muted)}
 const AMOUNTS = [2000,3000,4000,5000,6000,7000,8000,10000];
 const COLORS  = ["#44e0ff","#7a5bff","#16e2b6","#ff6ad5","#ffd166","#4be1a0","#8ab6ff","#ff9bd1"];
 const WP_NUMBERS = {
-  principal: "5491126980720",
-  pc1: "5491111111111", pc2: "5491222222222", pc3: "5491333333333"
+  principal: "5491157737173",
+  pc1: "5491138601132", pc2: "5491138214312", pc3: "5491168392647"
 };
 const WP_MSG = "Hola, gané $%AMOUNT% en fichas extra en la ruleta y quiero reclamarlo con mi próxima carga.";
 
 /* Plataforma por PC */
 const PLATFORM_LINKS = {
   principal: "https://plataforma.example/inicio",
-  pc1: "https://plataforma.example/pc1",
-  pc2: "https://plataforma.example/pc2",
-  pc3: "https://plataforma.example/pc3"
+  pc1: "https://c01.bet300vip.com/",
+  pc2: "https://c02.bet300vip.com/",
+  pc3: "https://c03.bet300vip.com/"
 };
 
 /* ========= Estado ========= */
@@ -354,7 +377,8 @@ const DEADLINE_KEY = 'promo_end_fixed_ts';
 function computeToday2359(){
   const now = new Date();
   const end = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 0, 0); // local 23:59
-  return (end.getTime() > now.getTime()) ? end.getTime() : new Date(now.getFullYear(), now.getMonth(), now.getDate()+1, 23, 59, 0, 0).getTime();
+  return (end.getTime() > now.getTime()) ? end.getTime()
+         : new Date(now.getFullYear(), now.getMonth(), now.getDate()+1, 23, 59, 0, 0).getTime();
 }
 function getOrInitFixedDeadline(){
   const saved = parseInt(localStorage.getItem(DEADLINE_KEY)||'0',10);
@@ -364,16 +388,13 @@ function getOrInitFixedDeadline(){
   localStorage.setItem(DEADLINE_KEY, String(end));
   return end;
 }
-function remainingMs(){
-  return Math.max(0, getOrInitFixedDeadline() - Date.now());
-}
+function remainingMs(){ return Math.max(0, getOrInitFixedDeadline() - Date.now()); }
 function isExpired(){ return remainingMs() <= 0; }
 function formatMMSS(ms){
   const total = Math.floor(ms/1000);
   const h = Math.floor(total/3600);
   const m = Math.floor((total%3600)/60);
   const s = total%60;
-  // si quedan horas, mostramos H:MM:SS, si no MM:SS
   return (h>0)
     ? `${h}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`
     : `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
@@ -411,9 +432,7 @@ setSize();
 
 /* iniciar contador */
 tickCountdown();
-const __interval = setInterval(()=>{
-  if(tickCountdown()) clearInterval(__interval);
-}, 1000);
+const __interval = setInterval(()=>{ if(tickCountdown()) clearInterval(__interval); }, 1000);
 
 /* restaurar premio si ya había uno */
 const saved = parseInt(localStorage.getItem('spin_amount')||'0',10);
