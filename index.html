@@ -214,8 +214,8 @@ const subtitleHTML=p=>p.type==='money'
   ? `Recibís <b>${money(p.value)} extra</b> con tu próxima carga.`
   : `Recibís un <b>${p.value}% extra</b> con tu próxima carga.`;
 const whatsappText=p=>p.type==='money'
-  ? `Hola BET300, gané ${money(p.value)} en la ruleta y quiero reclamarlo con mi próxima carga.`
-  : `Hola BET300, gané un ${p.value}% de bono en la ruleta y quiero reclamarlo con mi próxima carga.`;
+  ? `Hola, gané ${money(p.value)} en la ruleta y quiero reclamarlo con mi próxima carga.`
+  : `Hola, gané un ${p.value}% de bono en la ruleta y quiero reclamarlo con mi próxima carga.`;
 
 function getWrapWidth(){return Math.floor(document.querySelector('.wrap').getBoundingClientRect().width)}
 function setSize(){
