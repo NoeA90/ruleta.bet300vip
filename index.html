@@ -152,8 +152,8 @@ h1,h2,h3,p{margin:0 0 8px} h1{font-size:24px} .muted{color:var(--muted)}
 
 <script>
 /* ===== Premios: $ intercalado con % ===== */
-const MONEY_VALUES   = [2000,3000,4000,5000,6000,7000,8000,9000,1000];
-const PERCENT_VALUES = [10,20,30,40,50];
+const MONEY_VALUES   = [2000,3000,4000,5000,2000,4000,3000,5000,1000];
+const PERCENT_VALUES = [10,20,30];
 const PRIZES = (()=>{const r=[];const m=Math.max(MONEY_VALUES.length,PERCENT_VALUES.length);
   for(let i=0;i<m;i++){ if(i<MONEY_VALUES.length)r.push({type:'money',value:MONEY_VALUES[i]});
     if(i<PERCENT_VALUES.length)r.push({type:'percent',value:PERCENT_VALUES[i]}); } return r; })();
