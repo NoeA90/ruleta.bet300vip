@@ -8,24 +8,19 @@
 
 <style>
 :root{
-  /* 🎄 NAVIDAD */
   --bg:#050818;
   --panel:#0b1024;
-  --panel2:#0f1736;
   --border:#2b2f55;
 
   --text:#f9fbff;
   --muted:#c7cbee;
 
   --gold:#facc15;
-  --gold2:#fde68a;
-
   --red:#ff1f3d;
   --red2:#ff3b30;
-  --green:#22c55e;
 
   --ok:#25D366;
-  --pointer:#facc15; /* puntero dorado */
+  --pointer:#facc15;
 }
 *{box-sizing:border-box} html,body{height:100%}
 body{
@@ -71,12 +66,21 @@ body::before{content:"";position:fixed;inset:0;z-index:-3;background:
 .head{display:flex;align-items:center;gap:10px;margin-bottom:8px;flex-wrap:wrap}
 .brand{
   display:inline-flex;align-items:center;gap:10px;
-  height:38px;padding:6px 12px;border-radius:14px;
+  padding:8px 12px;border-radius:16px;
   background:linear-gradient(90deg,rgba(255,31,61,.22),rgba(250,204,21,.14));
   border:1px solid rgba(250,204,21,.22);
-  color:#fff;font-weight:1000;line-height:1;
   box-shadow:0 10px 22px rgba(0,0,0,.25);
 }
+.brand img{
+  height:34px;width:auto;display:block;
+  filter:drop-shadow(0 6px 10px rgba(0,0,0,.45));
+}
+.brand .ttl{
+  font-weight:1000;letter-spacing:.2px;
+  display:flex;flex-direction:column;line-height:1.05;
+}
+.brand .ttl small{font-weight:900;color:rgba(255,255,255,.85);font-size:12px;letter-spacing:.12em}
+
 .pill{
   background:linear-gradient(90deg,rgba(255,31,61,.14),rgba(250,204,21,.10));
   border:1px solid rgba(250,204,21,.18);
@@ -126,30 +130,23 @@ canvas{width:100%;height:auto;display:block}
   .pointer{border-left:12px solid transparent;border-right:12px solid transparent;border-bottom:22px solid var(--pointer);top:4px}
 }
 
-/* Bloque plataforma */
+/* Plataforma */
 .promo{
-  display:grid;
-  grid-template-columns:1fr minmax(200px,260px);
+  display:grid;grid-template-columns:1fr minmax(200px,260px);
   align-items:center;gap:12px;margin-top:10px;padding:12px;
-  border:1px dashed rgba(250,204,21,.20);
-  border-radius:12px
+  border:1px dashed rgba(250,204,21,.20);border-radius:12px
 }
 .promo.expired{border-color:rgba(255,107,107,.55)}
 .promo .copy{display:grid;gap:4px}
 .promo .eyebrow{
-  padding:2px 8px;border-radius:999px;
-  border:1px solid rgba(250,204,21,.35);
-  background:rgba(250,204,21,.12);
-  color:#ffe27a;font-weight:900;font-size:12px;width:max-content
+  padding:2px 8px;border-radius:999px;border:1px solid rgba(250,204,21,.35);
+  background:rgba(250,204,21,.12);color:#ffe27a;font-weight:900;font-size:12px;width:max-content
 }
-
-/* Botón “Entrar” */
 .btn.play{
   display:inline-flex;gap:10px;align-items:center;justify-content:center;
   padding:14px 16px;border-radius:12px;font-weight:1000;
   background:linear-gradient(90deg,var(--red),var(--red2));
-  color:#fff;
-  border:1px solid rgba(255,255,255,.10);
+  color:#fff;border:1px solid rgba(255,255,255,.10);
   box-shadow:0 12px 26px rgba(255,31,61,.22)
 }
 @media(max-width:520px){.promo{grid-template-columns:1fr}.btn.play{width:100%}}
@@ -158,36 +155,21 @@ canvas{width:100%;height:auto;display:block}
 .dock{
   position:fixed;left:0;right:0;bottom:0;z-index:10;
   background:linear-gradient(180deg, rgba(6,10,28,0) 0%, rgba(6,10,28,.85) 22%, rgba(6,10,28,.95) 100%);
-  padding:10px 16px 14px;
-  display:flex;gap:12px;align-items:center
+  padding:10px 16px 14px;display:flex;gap:12px;align-items:center
 }
 .btn{
-  appearance:none;border:none;cursor:pointer;
-  padding:14px 16px;border-radius:14px;font-weight:1000;
-  color:#fff;width:100%;
-  box-shadow:0 10px 22px rgba(0,0,0,.35)
+  appearance:none;border:none;cursor:pointer;padding:14px 16px;border-radius:14px;font-weight:1000;
+  color:#fff;width:100%;box-shadow:0 10px 22px rgba(0,0,0,.35)
 }
 .btn:disabled{opacity:.55;cursor:not-allowed}
 .btn.ok{background:linear-gradient(90deg,#22c55e,#16a34a);color:#022c22}
-
-/* 🔴 Girar rojo brillante */
-#spinBtn{
-  background:linear-gradient(90deg,var(--red),var(--red2));
-}
-#spinBtn:disabled{
-  background:linear-gradient(90deg,#ff7a8c,#ff6a60);
-}
+#spinBtn{background:linear-gradient(90deg,var(--red),var(--red2))}
+#spinBtn:disabled{background:linear-gradient(90deg,#ff7a8c,#ff6a60)}
 
 /* Confetti */
 .confetti{position:fixed;inset:0;pointer-events:none;z-index:40}
-.confetti i{
-  position:absolute;top:-20px;width:10px;height:14px;border-radius:2px;opacity:0;
-  animation:confFall 1.6s linear forwards;
-}
-@keyframes confFall{
-  8%{opacity:1}
-  100%{transform:translateY(110vh) rotate(360deg);opacity:0}
-}
+.confetti i{position:absolute;top:-20px;width:10px;height:14px;border-radius:2px;opacity:0;animation:confFall 1.6s linear forwards}
+@keyframes confFall{8%{opacity:1}100%{transform:translateY(110vh) rotate(360deg);opacity:0}}
 </style>
 </head>
 
@@ -198,7 +180,15 @@ canvas{width:100%;height:auto;display:block}
 <div class="container">
   <div class="card">
     <div class="head">
-      <strong class="brand">🎄 BET300 · Ruleta Navidad</strong>
+      <div class="brand">
+        <!-- ✅ TU LOGO NAVIDEÑO -->
+        <img src="logo-navidad.svg" alt="BET300 Navidad" />
+        <div class="ttl">
+          <span>BET300</span>
+          <small>ESPECIAL NAVIDAD</small>
+        </div>
+      </div>
+
       <span class="pill">Promo interactiva</span>
       <span class="pill time">⏳ Tiempo limitado <span class="count" id="countdown">--:--</span></span>
       <span class="pill sound" id="soundToggle">🔊 Sonido: <b id="soundState">ON</b></span>
@@ -254,7 +244,7 @@ canvas{width:100%;height:auto;display:block}
 function setupSnow(){
   const snow = document.getElementById("snow");
   snow.innerHTML = "";
-  const flakes = 44;
+  const flakes = 46;
   for(let i=0;i<flakes;i++){
     const f = document.createElement("i");
     const size = 3 + Math.random()*4;
@@ -269,21 +259,21 @@ function setupSnow(){
 }
 setupSnow();
 
-/* ===== Premios: $ intercalado con % ===== */
+/* ===== Premios ===== */
 const MONEY_VALUES   = [2000,3000,4000,5000,2000,4000,3000,5000,1000];
 const PERCENT_VALUES = [10,20,30];
 const PRIZES = (()=>{const r=[];const m=Math.max(MONEY_VALUES.length,PERCENT_VALUES.length);
   for(let i=0;i<m;i++){ if(i<MONEY_VALUES.length)r.push({type:'money',value:MONEY_VALUES[i]});
     if(i<PERCENT_VALUES.length)r.push({type:'percent',value:PERCENT_VALUES[i]}); } return r; })();
 
-/* 🎄 Paleta navidad (rojo/dorado/verde/celeste) */
+/* Paleta navidad */
 const COLORS=[
   "#ff1f3d","#facc15","#22c55e","#60a5fa","#ff3b30",
   "#fde68a","#16a34a","#93c5fd","#ff6ad5","#ffd166",
   "#34d39a","#8ab6ff","#ffa3e0","#7ce1b9"
 ];
 
-/* ===== 5 PCs: WhatsApp + Plataforma ( ?pc=1|2|3|4|5 ) ===== */
+/* ===== 5 PCs ( ?pc=1..5 ) ===== */
 const PLATFORM_LINKS = {
   pc1: "https://300vip-c01.vercel.app/",
   pc2: "https://300vip-c02.vercel.app/",
@@ -291,7 +281,6 @@ const PLATFORM_LINKS = {
   pc4: "https://alvge.bet300vip.com/",
   pc5: "https://bet300.site/"
 };
-
 const WP_NUMBERS = {
   pc1: "5491171559478",
   pc2: "5491151622581",
@@ -299,7 +288,6 @@ const WP_NUMBERS = {
   pc4: "5491150030414",
   pc5: "5491150030414"
 };
-
 function normalizeWP(n){
   const s = String(n).replace(/[^\d+]/g, "");
   if (s.startsWith("+549") || s.startsWith("549")) return s.replace(/^\+/, "");
@@ -307,18 +295,16 @@ function normalizeWP(n){
   if (s.startsWith("54"))   return "549" + s.slice(2);
   return "549" + s;
 }
-
 const params=new URLSearchParams(location.search);
 const pcParam=(params.get('pc')||"1").trim();
 const pcMatch=/^[1-5]$/.test(pcParam)?pcParam:"1";
 const pcKey="pc"+pcMatch;
 
 const WP = normalizeWP(WP_NUMBERS[pcKey]);
-const PLATFORM = PLATFORM_LINKS[pcKey];
-document.getElementById('playNow').href = PLATFORM;
+document.getElementById('playNow').href = PLATFORM_LINKS[pcKey];
 
-/* ===== Antifraude: device id + código + timestamp visibles ===== */
-const SALT = "bet300-ruleta-navidad-v1";
+/* ===== Antifraude ===== */
+const SALT = "bet300-ruleta-navidad-v2";
 function ensureDeviceId(){
   let id = localStorage.getItem('device_id');
   if(!id){ id = (crypto.randomUUID?.() || `${Date.now()}-${Math.random().toString(36).slice(2,8)}`); localStorage.setItem('device_id', id); }
@@ -358,12 +344,20 @@ const AudioKit=(()=>{
   }
   function spinStart(){ const id=setInterval(()=>click(860+Math.random()*120,0.035,0.045),110); return ()=>clearInterval(id); }
   function win(){ [880,1175,1568].forEach((f,i)=>setTimeout(()=>click(f,0.12,0.09), i*130)); }
-  return {ctx,unlock,spinStart,win};
+  return {unlock,spinStart,win};
 })();
 soundToggle.addEventListener('click',()=>{ soundOn=!soundOn; soundState.textContent=soundOn?'ON':'OFF'; });
 
-/* ===== Canvas / ruleta ===== */
-const wheel=document.getElementById('wheel'), ctx=wheel.getContext('2d');
+/* ===== Logo (opcional dentro del centro) ===== */
+const LOGO_SRC = "logo-navidad.svg";     // 👈 tu svg
+const DRAW_LOGO_IN_CENTER = true;       // 👈 si querés logo también en el centro
+const logoImg = new Image();
+logoImg.src = LOGO_SRC;
+let logoReady = false;
+logoImg.onload = ()=>{ logoReady = true; };
+
+/* ===== Canvas ===== */
+const wheel=document.getElementById('wheel'), c=wheel.getContext('2d');
 const spinBtn=document.getElementById('spinBtn'), claimBtn=document.getElementById('claimBtn');
 const badge=document.getElementById('badge'), title=document.getElementById('title'), subtitle=document.getElementById('subtitle');
 const countdownEl=document.getElementById('countdown'), promoBox=document.getElementById('promoBox');
@@ -390,13 +384,103 @@ function setSize(){
   const w=Math.min(520,Math.max(280,getWrapWidth()));
   cssW=w; wheel.width=Math.floor(w*dpr); wheel.height=Math.floor(w*dpr);
   wheel.style.width=w+'px'; wheel.style.height=w+'px';
-  ctx.setTransform(dpr,0,0,dpr,0,0);
+  c.setTransform(dpr,0,0,dpr,0,0);
   cx=wheel.width/dpr/2; cy=wheel.height/dpr/2; r=Math.min(cx,cy)-10;
 }
 addEventListener('resize',()=>{clearTimeout(window.__wTo);window.__wTo=setTimeout(()=>{setSize()},120)})
 
+/* ✅ Guirnalda “peludita” (tira de arbolito) */
+function drawTinselRing(){
+  const rr = r*1.075;
+  const spikes = 240; // más = más peluda
+  const t = Date.now()/600;
+
+  // “cuerda” base verde
+  c.save();
+  c.beginPath();
+  c.lineWidth = Math.max(6, r*0.035);
+  c.strokeStyle = "rgba(34,197,94,.55)";
+  c.shadowColor = "rgba(34,197,94,.25)";
+  c.shadowBlur = 10;
+  c.arc(cx,cy,rr,0,Math.PI*2);
+  c.stroke();
+  c.restore();
+
+  // pelitos + brillos
+  c.save();
+  for(let i=0;i<spikes;i++){
+    const a = (i/spikes)*Math.PI*2;
+    const wob = Math.sin(a*8 + t)* (r*0.012);
+    const baseR = rr + wob;
+    const len = (r*0.02) + (Math.sin(a*22 - t*2)+1)/2 * (r*0.03);
+
+    const x0 = cx + Math.cos(a)*baseR;
+    const y0 = cy + Math.sin(a)*baseR;
+    const x1 = cx + Math.cos(a)*(baseR + len);
+    const y1 = cy + Math.sin(a)*(baseR + len);
+
+    c.beginPath();
+    c.lineWidth = 2;
+    c.strokeStyle = (i%3===0) ? "rgba(34,197,94,.65)" : "rgba(250,204,21,.22)";
+    c.moveTo(x0,y0); c.lineTo(x1,y1);
+    c.stroke();
+
+    // destellitos
+    if(i%17===0){
+      c.beginPath();
+      c.fillStyle="rgba(255,255,255,.75)";
+      c.arc(x1,y1,2.2,0,Math.PI*2);
+      c.fill();
+    }
+  }
+  c.restore();
+
+  // pompones rojo/dorado
+  const bulbs = 30;
+  for(let i=0;i<bulbs;i++){
+    const a = (i/bulbs)*Math.PI*2 + (t*0.2);
+    const x = cx + Math.cos(a)*rr;
+    const y = cy + Math.sin(a)*rr;
+    const pulse = 0.6 + 0.4*Math.sin(t*2 + i);
+    c.beginPath();
+    c.fillStyle = (i%2===0) ? `rgba(255,31,61,${0.55+0.25*pulse})` : `rgba(250,204,21,${0.45+0.30*pulse})`;
+    c.shadowColor = (i%2===0) ? "rgba(255,31,61,.35)" : "rgba(250,204,21,.35)";
+    c.shadowBlur = 12;
+    c.arc(x,y,Math.max(4, r*0.028),0,Math.PI*2);
+    c.fill();
+    c.shadowBlur = 0;
+  }
+}
+
+/* ✅ Centro: logo o texto */
+function drawCenter(rCenter){
+  c.beginPath(); c.arc(cx,cy,rCenter,0,Math.PI*2);
+  c.fillStyle="rgba(6,10,28,.95)";
+  c.fill();
+  c.strokeStyle="rgba(255,31,61,.55)";
+  c.lineWidth=Math.max(2,rCenter*.08);
+  c.stroke();
+
+  if(DRAW_LOGO_IN_CENTER && logoReady){
+    // escala del logo
+    const pad = rCenter*0.18;
+    const size = (rCenter*2) - pad*2;
+    c.save();
+    c.globalAlpha = 0.98;
+    c.drawImage(logoImg, cx - size/2, cy - size/2, size, size);
+    c.restore();
+  }else{
+    c.save();
+    c.fillStyle="rgba(250,204,21,.95)";
+    c.font = `1000 ${Math.max(14, rCenter*0.44)}px system-ui,-apple-system,Segoe UI`;
+    c.textAlign="center"; c.textBaseline="middle";
+    c.fillText("BET300", cx, cy);
+    c.restore();
+  }
+}
+
 function draw(a){
-  ctx.clearRect(0,0,wheel.width,wheel.height);
+  c.clearRect(0,0,wheel.width,wheel.height);
 
   const n=PRIZES.length, arc=Math.PI*2/n;
   const font= cssW<=340?"900 20px system-ui,-apple-system,Segoe UI":
@@ -405,24 +489,23 @@ function draw(a){
 
   for(let i=0;i<n;i++){
     const s=a+i*arc, e=s+arc;
-    ctx.beginPath();ctx.moveTo(cx,cy);ctx.arc(cx,cy,r,s,e);ctx.closePath();
-    ctx.fillStyle=COLORS[i%COLORS.length];ctx.fill();
-
-    ctx.strokeStyle="rgba(0,0,0,.35)";ctx.lineWidth=2;ctx.stroke();
+    c.beginPath();c.moveTo(cx,cy);c.arc(cx,cy,r,s,e);c.closePath();
+    c.fillStyle=COLORS[i%COLORS.length];c.fill();
+    c.strokeStyle="rgba(0,0,0,.35)";c.lineWidth=2;c.stroke();
 
     const txt=label(PRIZES[i]);
-    ctx.save();ctx.translate(cx,cy);ctx.rotate(s+arc/2);
-    ctx.textAlign="right";ctx.fillStyle="#060812";ctx.font=font;
-    ctx.fillText(txt,r-18,10);
-    ctx.restore();
+    c.save();c.translate(cx,cy);c.rotate(s+arc/2);
+    c.textAlign="right";c.fillStyle="#060812";c.font=font;
+    c.fillText(txt,r-18,10);
+    c.restore();
   }
 
   /* aro exterior */
-  ctx.beginPath();
-  ctx.lineWidth=Math.max(8,r*0.04);
-  ctx.strokeStyle="rgba(250,204,21,.35)";
-  ctx.arc(cx,cy,r*1.02,0,Math.PI*2);
-  ctx.stroke();
+  c.beginPath();
+  c.lineWidth=Math.max(8,r*0.04);
+  c.strokeStyle="rgba(250,204,21,.25)";
+  c.arc(cx,cy,r*1.02,0,Math.PI*2);
+  c.stroke();
 
   /* luces */
   const bulbs=54, rr=r*1.02, t=Date.now()/130;
@@ -431,36 +514,26 @@ function draw(a){
     const x=cx+Math.cos(ang)*rr;
     const y=cy+Math.sin(ang)*rr;
     const on=(Math.floor(t)%bulbs)===i;
-    ctx.beginPath();
-    ctx.fillStyle=on?"rgba(255,255,255,1)":"rgba(255,255,255,.55)";
-    ctx.arc(x,y,Math.max(3,r*0.03),0,Math.PI*2);
-    ctx.fill();
+    c.beginPath();
+    c.fillStyle=on?"rgba(255,255,255,1)":"rgba(255,255,255,.55)";
+    c.arc(x,y,Math.max(3,r*0.03),0,Math.PI*2);
+    c.fill();
   }
+
+  /* 🎄 Guirnalda peluda */
+  drawTinselRing();
 
   /* centro */
   const rCenter=cssW<=360?Math.max(26,r*.085):cssW<=420?Math.max(30,r*.095):Math.max(34,r*.105);
-  ctx.beginPath();ctx.arc(cx,cy,rCenter,0,Math.PI*2);
-  ctx.fillStyle="rgba(6,10,28,.95)";
-  ctx.fill();
-  ctx.strokeStyle="rgba(255,31,61,.55)";
-  ctx.lineWidth=Math.max(2,rCenter*.08);
-  ctx.stroke();
-
-  /* texto centro */
-  ctx.save();
-  ctx.fillStyle="rgba(250,204,21,.95)";
-  ctx.font = `1000 ${Math.max(14, rCenter*0.44)}px system-ui,-apple-system,Segoe UI`;
-  ctx.textAlign="center"; ctx.textBaseline="middle";
-  ctx.fillText("BET300", cx, cy);
-  ctx.restore();
+  drawCenter(rCenter);
 }
-(function glow(){ draw(angle); requestAnimationFrame(glow); })();
+(function loop(){ draw(angle); requestAnimationFrame(loop); })();
 
 function normAngle(rad){ const T = Math.PI * 2; return ((rad % T) + T) % T; }
 function winnerIndexByAngle(a){
   const n = PRIZES.length;
   const arc = (Math.PI * 2) / n;
-  const pointer = Math.PI * 1.5; // 12 en punto
+  const pointer = Math.PI * 1.5;
   const rel = normAngle(pointer - a);
   return Math.floor(rel / arc) % n;
 }
@@ -473,7 +546,7 @@ function animateTo(target,ms,cb){
   })(start);
 }
 
-/* Persistencia / reset / countdown */
+/* Persistencia */
 function restoreDaily(){
   const today=todayKey(); const stored=localStorage.getItem('spin_date');
   if(stored && stored!==today){
