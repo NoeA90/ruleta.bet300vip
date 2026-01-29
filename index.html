@@ -14,19 +14,19 @@
   --text:#eef1ff;
   --muted:#b7bddb;
 
-  /* ✅ CAMBIO: GIRAR rojo brillante */
-  --spinRed1:#ff2e2e;
-  --spinRed2:#ff0038;
+  /* ✅ Botones: Girar naranja / Reclamar verde */
+  --spinOrange1:#ffb020;
+  --spinOrange2:#ff7a00;
 
-  --gold:#ffd166;         /* (queda disponible por si lo usás en otro lado) */
-  --gold2:#f59e0b;
+  --claimGreen1:#39ff88;
+  --claimGreen2:#12ff6a;
 
-  --neon:#22d3ee;         /* Reclamar */
-  --neon2:#06b6d4;
-
-  /* ✅ NUEVO: verde neón fluor para selección */
+  /* ✅ Segmento activo verde neón */
   --fluor:#39ff88;
   --fluor2:#12ff6a;
+
+  --neon:#22d3ee;         /* (queda por si lo usás) */
+  --neon2:#06b6d4;
 
   --ok:#22c55e;
   --danger:#fb7185;
@@ -137,11 +137,8 @@ h1{font-size:20px}
   border:1px solid var(--border);
   background:rgba(255,255,255,.03);
 }
-
-/* ✅ Mejor UX: borde del input según estado (NO cambia reglas) */
 .field.ok{border-color:rgba(57,255,136,.45); box-shadow:0 0 0 2px rgba(57,255,136,.08) inset;}
 .field.bad{border-color:rgba(251,113,133,.55); box-shadow:0 0 0 2px rgba(251,113,133,.10) inset;}
-
 .field input{
   width:100%;
   border:none; outline:none;
@@ -168,8 +165,6 @@ h1{font-size:20px}
 .seg:hover{transform:translateY(-1px); filter:brightness(1.05)}
 .seg b{display:block; font-size:14px}
 .seg small{display:block; color:var(--muted); margin-top:2px; font-size:12px; line-height:1.25}
-
-/* ✅ CAMBIO: activo verde fluor */
 .seg.active{
   border-color:rgba(57,255,136,.60);
   box-shadow:0 0 0 2px rgba(57,255,136,.10) inset, 0 14px 28px rgba(0,0,0,.32);
@@ -216,12 +211,29 @@ h1{font-size:20px}
 }
 .qseg:hover{transform:translateY(-1px);filter:brightness(1.05)}
 .qseg small{display:block;font-weight:700;color:var(--muted);font-size:11px;margin-top:2px}
-
-/* ✅ CAMBIO: activo verde fluor */
 .qseg.active{
   border-color:rgba(57,255,136,.60);
   background:linear-gradient(180deg, rgba(57,255,136,.18), rgba(18,255,106,.08));
   box-shadow:0 0 0 2px rgba(57,255,136,.08) inset;
+}
+
+/* ✅ NUEVO: barra “Monto” arriba de la ruleta (sticky debajo de segmentos) */
+.amountBar{
+  position:sticky;
+  top:92px;              /* debajo de la quickBar */
+  z-index:24;
+  margin-top:10px;
+}
+@media(max-width:520px){
+  .amountBar{top:104px}
+}
+.amountInner{
+  border:1px solid var(--border);
+  border-radius:16px;
+  background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
+  box-shadow:0 12px 30px rgba(0,0,0,.30);
+  padding:10px;
+  backdrop-filter: blur(6px);
 }
 
 .stat{
@@ -267,14 +279,12 @@ h1{font-size:20px}
 .btn:active{transform:translateY(0)}
 .btn:disabled{opacity:.55; cursor:not-allowed; filter:none}
 
-/* ✅ CAMBIO: GIRAR rojo brillante */
 #spinBtn{
-  background:linear-gradient(90deg,var(--spinRed1),var(--spinRed2));
+  background:linear-gradient(90deg,var(--spinOrange1),var(--spinOrange2));
   color:#061018;
 }
-
 #claimBtn{
-  background:linear-gradient(90deg,var(--neon),var(--neon2));
+  background:linear-gradient(90deg,var(--claimGreen1),var(--claimGreen2));
   color:#061018;
 }
 
@@ -350,7 +360,7 @@ h1{font-size:20px}
     </div>
 
     <div class="mActions">
-      <button id="mClaim" class="btn" style="background:linear-gradient(90deg,var(--neon),var(--neon2));color:#061018;">📲 Reclamar por WhatsApp</button>
+      <button id="mClaim" class="btn" style="background:linear-gradient(90deg,var(--claimGreen1),var(--claimGreen2));color:#061018;">📲 Reclamar por WhatsApp</button>
       <a id="mPlatform" class="btn platform" href="#" target="_blank" rel="noopener" style="text-decoration:none;display:inline-flex;align-items:center;justify-content:center;">🎮 Entrar a la plataforma</a>
       <button id="mClose" class="btn ghost">Cerrar</button>
     </div>
@@ -362,7 +372,6 @@ h1{font-size:20px}
     <!-- 1 línea -->
     <div class="topline">
       <div class="brand">
-        <!-- LOGO: ideal SVG en 320x120 (aprox) -->
         <img id="logoImg" src="logo.svg" alt="BET300" onerror="this.style.display='none'">
       </div>
 
@@ -372,12 +381,12 @@ h1{font-size:20px}
       </div>
     </div>
 
-    <!-- BARRA RÁPIDA ARRIBA: segmentos (sin scroll) -->
+    <!-- Segmentos arriba -->
     <div class="quickBar">
       <div class="quickInner">
         <div class="quickTop">
           <div class="ttl">Elegí tu segmento</div>
-          <div class="sub">Básica / Pro / VIP · luego cargás el monto y girás</div>
+          <div class="sub">Básica / Pro / VIP · luego elegís el monto</div>
         </div>
 
         <div class="quickSegBtns">
@@ -398,34 +407,44 @@ h1{font-size:20px}
     </div>
 
     <div class="grid" style="margin-top:12px">
-      <!-- IZQ: ruleta -->
+      <!-- IZQ: ruleta (con monto arriba) -->
       <div class="panel">
-        <div class="stage">
+        <!-- ✅ Monto arriba de la ruleta -->
+        <div class="amountBar">
+          <div class="amountInner">
+            <div class="field" id="amountField">
+              <div style="min-width:110px">
+                <div style="font-weight:900">Tu carga</div>
+                <div class="hint">mín. $5.000</div>
+              </div>
+              <input id="amount" inputmode="numeric" placeholder="Ej: 10000" />
+            </div>
+            <div class="muted" style="font-size:12px;margin-top:6px">
+              *Ingresá el monto y girá. Se valida según el segmento elegido.
+            </div>
+          </div>
+        </div>
+
+        <div class="stage" style="margin-top:12px">
           <div class="wrap">
             <canvas id="wheel" width="620" height="620"></canvas>
             <div class="pointer" aria-hidden="true"></div>
           </div>
         </div>
+
         <p class="muted" style="margin-top:10px;font-size:12px;text-align:center">
           Tip: elegí tu monto y segmento antes de girar. 1 giro por día (salvo “Otra chance”).
         </p>
       </div>
 
-      <!-- DER: selector + estado -->
+      <!-- DER: info + botones (mantengo tu estructura) -->
       <div class="panel">
         <div class="selector">
           <h1>Beneficio progresivo</h1>
           <p class="muted" style="margin-top:-2px">Base mínima: <b>$5.000</b>. Elegís tu carga y girás en tu segmento.</p>
 
-          <div class="field" id="amountField">
-            <div style="min-width:110px">
-              <div style="font-weight:900">Tu carga</div>
-              <div class="hint">mín. $5.000</div>
-            </div>
-            <input id="amount" inputmode="numeric" placeholder="Ej: 10000" />
-          </div>
+          <!-- ✅ Se elimina el input de acá para no duplicar -->
 
-          <!-- (Se mantiene acá también, pero ya no “obliga” a scrollear) -->
           <div class="segBtns">
             <button class="seg" id="segBasic" data-seg="basic">
               <b>BÁSICA</b>
@@ -476,14 +495,12 @@ h1{font-size:20px}
 <!-- Dock fijo -->
 <div class="dock">
   <button id="spinBtn" class="btn" disabled>🎯 Girar</button>
-  <button id="claimBtn" class="btn" disabled>📲 Reclamar por WhatsApp</button>
+  <button id="claimBtn" class="btn" disabled>✅ Reclamar</button>
 </div>
 
 <script>
 /* ==============================
    CONFIG: 5 PCs por parámetro ?pc=1..5
-   - LINK de plataforma único para todas: https://bet300.biz
-   - WhatsApp genéricos (cambiás luego)
 ================================ */
 const PLATFORM_UNIQUE = "https://bet300.biz";
 
@@ -515,8 +532,6 @@ document.getElementById("mPlatform").href = PLATFORM_UNIQUE;
 
 /* ==============================
    PREMIOS por segmento
-   - Base mínima: $5.000
-   - VIP: % único 30% con tope base $200.000 (bonus = min(monto,200000)*0.30)
 ================================ */
 const PRIZES = {
   basic: [
@@ -635,7 +650,7 @@ const subtitle=document.getElementById("subtitle");
 const stampEl=document.getElementById("stampLine");
 
 const amountEl=document.getElementById("amount");
-const amountField=document.getElementById("amountField"); // ✅ UX borde input
+const amountField=document.getElementById("amountField");
 const ruleLine=document.getElementById("ruleLine");
 
 const segButtons=[...document.querySelectorAll(".seg")];
@@ -673,16 +688,14 @@ function sanitizeAmount(){
   return raw ? Number(raw) : 0;
 }
 
-/* ==== Sync helpers (botones arriba + panel) ==== */
+/* ==== Sync helpers ==== */
 function setActiveSegUI(seg){
   selectedSegment = seg;
   currentPrizes = PRIZES[selectedSegment];
 
-  // Activo en ambos sets
   segButtons.forEach(b=>b.classList.toggle("active", b.dataset.seg===seg));
   qSegButtons.forEach(b=>b.classList.toggle("active", b.dataset.seg===seg));
 
-  // Reset visual premio (no toca persistencia)
   badge.textContent="-";
   stampEl.textContent="";
   title.textContent="Tenés 1 giro disponible";
@@ -694,8 +707,6 @@ function setActiveSegUI(seg){
 
 function validateSelection(){
   const amt = sanitizeAmount();
-
-  // ✅ UX borde input (NO altera reglas)
   amountField.classList.remove("ok","bad");
 
   if(!selectedSegment){
@@ -745,16 +756,12 @@ function validateSelection(){
   subtitle.innerHTML = `Girás en <b>${seg.name}</b>. Premios se acreditan con tu próxima carga.`;
 }
 
-/* Click en botones de arriba */
 qSegButtons.forEach(btn=>{
   btn.addEventListener("click", ()=> setActiveSegUI(btn.dataset.seg));
 });
-
-/* Click en botones del panel */
 segButtons.forEach(btn=>{
   btn.addEventListener("click", ()=> setActiveSegUI(btn.dataset.seg));
 });
-
 amountEl.addEventListener("input", validateSelection);
 
 /* ==============================
@@ -861,7 +868,6 @@ function draw(a){
     ctx.restore();
   }
 
-  // aro + luces
   ctx.beginPath();
   ctx.lineWidth=Math.max(8,r*0.04);
   ctx.strokeStyle="rgba(255,255,255,.14)";
@@ -879,7 +885,6 @@ function draw(a){
     ctx.fill();
   }
 
-  // centro
   const rCenter=cssW<=360?Math.max(26,r*.085):cssW<=420?Math.max(30,r*.095):Math.max(34,r*.105);
   ctx.beginPath();ctx.arc(cx,cy,rCenter,0,Math.PI*2);
   ctx.fillStyle="#0a0f1f";ctx.fill();
@@ -1109,7 +1114,6 @@ function init(){
   setInterval(tickCountdown, 1000);
   scheduleMidnightReset();
 
-  // default max spins (si no existe)
   if(!localStorage.getItem(storageKey("max_spins"))) setMaxSpinsToday(1);
 
   restorePayloadIfAny();
