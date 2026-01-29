@@ -14,18 +14,10 @@
   --text:#eef1ff;
   --muted:#b7bddb;
 
-  /* ✅ Botones: Girar naranja / Reclamar verde */
-  --spinOrange1:#ffb020;
-  --spinOrange2:#ff7a00;
+  --gold:#ffd166;         /* Girar */
+  --gold2:#f59e0b;
 
-  --claimGreen1:#39ff88;
-  --claimGreen2:#12ff6a;
-
-  /* ✅ Segmento activo verde neón */
-  --fluor:#39ff88;
-  --fluor2:#12ff6a;
-
-  --neon:#22d3ee;         /* (queda por si lo usás) */
+  --neon:#22d3ee;         /* Reclamar */
   --neon2:#06b6d4;
 
   --ok:#22c55e;
@@ -72,11 +64,24 @@ body::before{
 }
 .brand{display:flex; align-items:center; gap:10px; min-width:0;}
 .brand img{
-  height:42px; width:auto; display:block;
+  height:48px; width:auto; display:block;
   filter:drop-shadow(0 3px 10px rgba(0,0,0,.55));
 }
-@media(max-width:420px){ .brand img{height:38px} }
+@media(max-width:420px){ .brand img{height:44px} }
 .tagline{display:flex; gap:10px; align-items:center; margin-left:auto;}
+
+/* Botón menú */
+.gear{
+  appearance:none;border:1px solid var(--border);
+  background:rgba(255,255,255,.04);
+  color:var(--text);
+  border-radius:12px;
+  padding:8px 10px;
+  font-weight:900;
+  cursor:pointer;
+}
+.gear:hover{filter:brightness(1.08)}
+
 .pill{
   display:inline-flex; gap:8px; align-items:center;
   padding:6px 10px; border-radius:999px;
@@ -108,8 +113,11 @@ body::before{
   padding:14px;
 }
 
-.stage{position:relative; display:flex; align-items:center; justify-content:center}
-.wrap{width:100%; max-width:520px; margin:auto; position:relative}
+/* Ruleta más arriba y mejor centrada */
+.panel.wheelPanel{padding:10px 10px 6px}
+.stage{position:relative; display:flex; align-items:center; justify-content:center; padding-top:4px}
+.wrap{width:100%; max-width:540px; margin:auto; position:relative}
+
 canvas{width:100%; height:auto; display:block}
 .pointer{
   position:absolute; top:6px; left:50%; transform:translateX(-50%);
@@ -137,8 +145,6 @@ h1{font-size:20px}
   border:1px solid var(--border);
   background:rgba(255,255,255,.03);
 }
-.field.ok{border-color:rgba(57,255,136,.45); box-shadow:0 0 0 2px rgba(57,255,136,.08) inset;}
-.field.bad{border-color:rgba(251,113,133,.55); box-shadow:0 0 0 2px rgba(251,113,133,.10) inset;}
 .field input{
   width:100%;
   border:none; outline:none;
@@ -166,9 +172,9 @@ h1{font-size:20px}
 .seg b{display:block; font-size:14px}
 .seg small{display:block; color:var(--muted); margin-top:2px; font-size:12px; line-height:1.25}
 .seg.active{
-  border-color:rgba(57,255,136,.60);
-  box-shadow:0 0 0 2px rgba(57,255,136,.10) inset, 0 14px 28px rgba(0,0,0,.32);
-  background:linear-gradient(180deg, rgba(57,255,136,.18), rgba(18,255,106,.08));
+  border-color:rgba(34,211,238,.55);
+  box-shadow:0 14px 28px rgba(0,0,0,.32);
+  background:linear-gradient(180deg, rgba(34,211,238,.14), rgba(124,77,255,.08));
 }
 
 /* ==== BARRA RÁPIDA ARRIBA (sticky) ==== */
@@ -212,28 +218,8 @@ h1{font-size:20px}
 .qseg:hover{transform:translateY(-1px);filter:brightness(1.05)}
 .qseg small{display:block;font-weight:700;color:var(--muted);font-size:11px;margin-top:2px}
 .qseg.active{
-  border-color:rgba(57,255,136,.60);
-  background:linear-gradient(180deg, rgba(57,255,136,.18), rgba(18,255,106,.08));
-  box-shadow:0 0 0 2px rgba(57,255,136,.08) inset;
-}
-
-/* ✅ NUEVO: barra “Monto” arriba de la ruleta (sticky debajo de segmentos) */
-.amountBar{
-  position:sticky;
-  top:92px;              /* debajo de la quickBar */
-  z-index:24;
-  margin-top:10px;
-}
-@media(max-width:520px){
-  .amountBar{top:104px}
-}
-.amountInner{
-  border:1px solid var(--border);
-  border-radius:16px;
-  background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
-  box-shadow:0 12px 30px rgba(0,0,0,.30);
-  padding:10px;
-  backdrop-filter: blur(6px);
+  border-color:rgba(34,211,238,.55);
+  background:linear-gradient(180deg, rgba(34,211,238,.14), rgba(124,77,255,.08));
 }
 
 .stat{
@@ -280,11 +266,11 @@ h1{font-size:20px}
 .btn:disabled{opacity:.55; cursor:not-allowed; filter:none}
 
 #spinBtn{
-  background:linear-gradient(90deg,var(--spinOrange1),var(--spinOrange2));
-  color:#061018;
+  background:linear-gradient(90deg,var(--gold),var(--gold2));
+  color:#0b0f1e;
 }
 #claimBtn{
-  background:linear-gradient(90deg,var(--claimGreen1),var(--claimGreen2));
+  background:linear-gradient(90deg,var(--neon),var(--neon2));
   color:#061018;
 }
 
@@ -337,11 +323,81 @@ h1{font-size:20px}
   background:linear-gradient(90deg, rgba(124,77,255,.95), rgba(34,211,238,.92));
   color:#061018;
 }
+
+/* ==== MENÚ LATERAL ==== */
+.sideOverlay{
+  position:fixed; inset:0; z-index:60;
+  background:rgba(0,0,0,.45);
+  backdrop-filter: blur(3px);
+}
+.sideMenu{
+  position:fixed; top:0; right:0; height:100vh;
+  width:min(340px,88vw);
+  transform:translateX(110%);
+  transition:transform .18s ease;
+  z-index:65;
+  padding:12px;
+}
+.sideMenu.show{transform:translateX(0)}
+.sideCard{
+  height:100%;
+  background: radial-gradient(120% 100% at 50% 0%, rgba(57,255,136,.08), transparent), var(--panel2);
+  border:1px solid var(--border);
+  border-radius:18px;
+  padding:14px;
+  box-shadow:0 22px 55px rgba(0,0,0,.55);
+}
+.sideHead{
+  display:flex; align-items:center; justify-content:space-between;
+  margin-bottom:10px;
+}
+.sideClose{
+  appearance:none;border:1px solid var(--border);
+  background:rgba(255,255,255,.04);
+  color:var(--text);
+  border-radius:10px;
+  padding:6px 10px;
+  cursor:pointer;
+}
+.sideItem{
+  display:flex; align-items:center; justify-content:space-between;
+  gap:10px;
+  padding:10px 12px;
+  border-radius:14px;
+  border:1px solid rgba(255,255,255,.10);
+  background:rgba(255,255,255,.03);
+  margin-top:10px;
+}
 </style>
 </head>
 <body>
 
 <div id="confetti" class="confetti" aria-hidden="true"></div>
+
+<!-- MENÚ LATERAL -->
+<div id="sideMenu" class="sideMenu" aria-hidden="true">
+  <div class="sideCard">
+    <div class="sideHead">
+      <b>Opciones</b>
+      <button class="sideClose" id="closeMenu" aria-label="Cerrar">✖</button>
+    </div>
+
+    <div class="sideItem">
+      <span>⚡ Ventana activa</span>
+      <span class="count" id="countdownSide">--:--</span>
+    </div>
+
+    <div class="sideItem">
+      <span>🔊 Sonido</span>
+      <button class="pill sound" id="soundToggleSide"><b id="soundStateSide">ON</b></button>
+    </div>
+
+    <div class="muted" style="font-size:12px; margin-top:10px;">
+      *1 giro por día (salvo “Otra chance”).
+    </div>
+  </div>
+</div>
+<div id="sideOverlay" class="sideOverlay" hidden></div>
 
 <!-- MODAL -->
 <div id="prizeModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
@@ -360,7 +416,7 @@ h1{font-size:20px}
     </div>
 
     <div class="mActions">
-      <button id="mClaim" class="btn" style="background:linear-gradient(90deg,var(--claimGreen1),var(--claimGreen2));color:#061018;">📲 Reclamar por WhatsApp</button>
+      <button id="mClaim" class="btn" style="background:linear-gradient(90deg,var(--neon),var(--neon2));color:#061018;">📲 Reclamar por WhatsApp</button>
       <a id="mPlatform" class="btn platform" href="#" target="_blank" rel="noopener" style="text-decoration:none;display:inline-flex;align-items:center;justify-content:center;">🎮 Entrar a la plataforma</a>
       <button id="mClose" class="btn ghost">Cerrar</button>
     </div>
@@ -369,24 +425,25 @@ h1{font-size:20px}
 
 <div class="container">
   <div class="card">
+
     <!-- 1 línea -->
     <div class="topline">
       <div class="brand">
+        <!-- LOGO: en la misma carpeta que index.html -> logo.svg -->
         <img id="logoImg" src="logo.svg" alt="BET300" onerror="this.style.display='none'">
       </div>
 
       <div class="tagline">
-        <span class="pill time">⚡ Ventana activa <span class="count" id="countdown">--:--</span></span>
-        <span class="pill sound" id="soundToggle">🔊 <b id="soundState">ON</b></span>
+        <button class="gear" id="openMenu" aria-label="Abrir menú">⚙️</button>
       </div>
     </div>
 
-    <!-- Segmentos arriba -->
+    <!-- BARRA RÁPIDA ARRIBA: segmentos (sin scroll) -->
     <div class="quickBar">
       <div class="quickInner">
         <div class="quickTop">
           <div class="ttl">Elegí tu segmento</div>
-          <div class="sub">Básica / Pro / VIP · luego elegís el monto</div>
+          <div class="sub">Básica / Pro / VIP · luego cargás el monto y girás</div>
         </div>
 
         <div class="quickSegBtns">
@@ -407,44 +464,35 @@ h1{font-size:20px}
     </div>
 
     <div class="grid" style="margin-top:12px">
-      <!-- IZQ: ruleta (con monto arriba) -->
-      <div class="panel">
-        <!-- ✅ Monto arriba de la ruleta -->
-        <div class="amountBar">
-          <div class="amountInner">
-            <div class="field" id="amountField">
-              <div style="min-width:110px">
-                <div style="font-weight:900">Tu carga</div>
-                <div class="hint">mín. $5.000</div>
-              </div>
-              <input id="amount" inputmode="numeric" placeholder="Ej: 10000" />
-            </div>
-            <div class="muted" style="font-size:12px;margin-top:6px">
-              *Ingresá el monto y girá. Se valida según el segmento elegido.
-            </div>
-          </div>
-        </div>
 
-        <div class="stage" style="margin-top:12px">
+      <!-- IZQ: ruleta -->
+      <div class="panel wheelPanel">
+        <div class="stage">
           <div class="wrap">
             <canvas id="wheel" width="620" height="620"></canvas>
             <div class="pointer" aria-hidden="true"></div>
           </div>
         </div>
-
-        <p class="muted" style="margin-top:10px;font-size:12px;text-align:center">
+        <p class="muted" style="margin-top:8px;font-size:12px;text-align:center">
           Tip: elegí tu monto y segmento antes de girar. 1 giro por día (salvo “Otra chance”).
         </p>
       </div>
 
-      <!-- DER: info + botones (mantengo tu estructura) -->
+      <!-- DER: selector + estado -->
       <div class="panel">
         <div class="selector">
           <h1>Beneficio progresivo</h1>
           <p class="muted" style="margin-top:-2px">Base mínima: <b>$5.000</b>. Elegís tu carga y girás en tu segmento.</p>
 
-          <!-- ✅ Se elimina el input de acá para no duplicar -->
+          <div class="field">
+            <div style="min-width:110px">
+              <div style="font-weight:900">Tu carga</div>
+              <div class="hint">mín. $5.000</div>
+            </div>
+            <input id="amount" inputmode="numeric" placeholder="Ej: 10000" />
+          </div>
 
+          <!-- (Se mantiene acá también) -->
           <div class="segBtns">
             <button class="seg" id="segBasic" data-seg="basic">
               <b>BÁSICA</b>
@@ -483,11 +531,12 @@ h1{font-size:20px}
           </div>
 
           <p class="muted" style="font-size:12px;margin-top:6px">
-            *El premio se acredita con la próxima carga elegida (según segmento).  
+            *El premio se acredita con la próxima carga elegida (según segmento).<br/>
             *Si sale “Otra chance”, habilita 2º tiro (máx. 2 tiros/día).
           </p>
         </div>
       </div>
+
     </div>
   </div>
 </div>
@@ -495,12 +544,14 @@ h1{font-size:20px}
 <!-- Dock fijo -->
 <div class="dock">
   <button id="spinBtn" class="btn" disabled>🎯 Girar</button>
-  <button id="claimBtn" class="btn" disabled>✅ Reclamar</button>
+  <button id="claimBtn" class="btn" disabled>📲 Reclamar por WhatsApp</button>
 </div>
 
 <script>
 /* ==============================
    CONFIG: 5 PCs por parámetro ?pc=1..5
+   - LINK de plataforma único para todas: https://bet300.biz
+   - WhatsApp genéricos (cambiás luego)
 ================================ */
 const PLATFORM_UNIQUE = "https://bet300.biz";
 
@@ -607,11 +658,42 @@ async function makeClaimCode(payload){
 }
 
 /* ==============================
-   AUDIO
+   MENÚ LATERAL (abrir/cerrar)
+================================ */
+const sideMenu = document.getElementById("sideMenu");
+const sideOverlay = document.getElementById("sideOverlay");
+const openMenuBtn = document.getElementById("openMenu");
+const closeMenuBtn = document.getElementById("closeMenu");
+
+function openMenu(){
+  sideMenu?.classList.add("show");
+  if(sideOverlay) sideOverlay.hidden=false;
+}
+function closeMenu(){
+  sideMenu?.classList.remove("show");
+  if(sideOverlay) sideOverlay.hidden=true;
+}
+openMenuBtn?.addEventListener("click", openMenu);
+closeMenuBtn?.addEventListener("click", closeMenu);
+sideOverlay?.addEventListener("click", closeMenu);
+
+/* ==============================
+   AUDIO + UI (solo menú lateral)
 ================================ */
 let soundOn = true;
-const soundToggle=document.getElementById("soundToggle");
-const soundState=document.getElementById("soundState");
+
+const soundToggleSide=document.getElementById("soundToggleSide");
+const soundStateSide=document.getElementById("soundStateSide");
+
+function syncSoundUI(){
+  if(soundStateSide) soundStateSide.textContent = soundOn ? "ON" : "OFF";
+}
+function toggleSound(){
+  soundOn = !soundOn;
+  syncSoundUI();
+}
+soundToggleSide?.addEventListener("click", toggleSound);
+syncSoundUI();
 
 const AudioKit=(()=>{
   const Ctx=window.AudioContext||window.webkitAudioContext;
@@ -630,10 +712,6 @@ const AudioKit=(()=>{
   function win(){ [880,1175,1568].forEach((f,i)=>setTimeout(()=>click(f,0.12,0.09), i*130)); }
   return {unlock,spinStart,win};
 })();
-soundToggle.addEventListener("click",()=>{
-  soundOn=!soundOn;
-  soundState.textContent=soundOn?"ON":"OFF";
-});
 
 /* ==============================
    UI refs
@@ -650,7 +728,6 @@ const subtitle=document.getElementById("subtitle");
 const stampEl=document.getElementById("stampLine");
 
 const amountEl=document.getElementById("amount");
-const amountField=document.getElementById("amountField");
 const ruleLine=document.getElementById("ruleLine");
 
 const segButtons=[...document.querySelectorAll(".seg")];
@@ -673,7 +750,7 @@ const MIN_BASE = 5000;
 
 const SEGMENTS = {
   basic: { name:"BÁSICA", min:5000,  max:9999,  percentCapMoney: 3000,  percentCapBase: null,    percentMax: 50 },
-  pro:   { name:"PRO",    min:10000, max:49999, percentCapMoney: 10000, percentCapBase: null,    percentMax: 50 },
+  pro:   { name:"PRO",    min:10000, max:49999, percentCapMoney: 10000, percentCapBase: null,   percentMax: 50 },
   vip:   { name:"VIP",    min:50000, max:Infinity, percentCapMoney: null, percentCapBase: 200000, percentMax: 30 }
 };
 
@@ -688,7 +765,7 @@ function sanitizeAmount(){
   return raw ? Number(raw) : 0;
 }
 
-/* ==== Sync helpers ==== */
+/* ==== Sync helpers (botones arriba + panel) ==== */
 function setActiveSegUI(seg){
   selectedSegment = seg;
   currentPrizes = PRIZES[selectedSegment];
@@ -707,13 +784,11 @@ function setActiveSegUI(seg){
 
 function validateSelection(){
   const amt = sanitizeAmount();
-  amountField.classList.remove("ok","bad");
 
   if(!selectedSegment){
     spinBtn.disabled=true;
     subtitle.innerHTML="Elegí tu monto + segmento para habilitar el giro.";
     ruleLine.textContent="—";
-    if(amt===0) amountField.classList.add("bad");
     return;
   }
 
@@ -721,7 +796,6 @@ function validateSelection(){
     spinBtn.disabled=true;
     subtitle.innerHTML=`La carga mínima para jugar es <b>${money(MIN_BASE)}</b>.`;
     ruleLine.textContent="—";
-    amountField.classList.add("bad");
     return;
   }
 
@@ -730,7 +804,6 @@ function validateSelection(){
     spinBtn.disabled=true;
     subtitle.innerHTML=`Tu monto no entra en <b>${seg.name}</b>. Ajustalo o cambiá de segmento.`;
     ruleLine.textContent="—";
-    amountField.classList.add("bad");
     return;
   }
 
@@ -740,12 +813,10 @@ function validateSelection(){
     spinBtn.disabled=true;
     subtitle.innerHTML=`Ya usaste tu chance de hoy.`;
     ruleLine.textContent="—";
-    amountField.classList.add("ok");
     return;
   }
 
   spinBtn.disabled=false;
-  amountField.classList.add("ok");
 
   if(selectedSegment==="vip"){
     ruleLine.textContent = `VIP: % se calcula sobre base hasta ${money(seg.percentCapBase)} (máx ${seg.percentMax}%).`;
@@ -756,12 +827,8 @@ function validateSelection(){
   subtitle.innerHTML = `Girás en <b>${seg.name}</b>. Premios se acreditan con tu próxima carga.`;
 }
 
-qSegButtons.forEach(btn=>{
-  btn.addEventListener("click", ()=> setActiveSegUI(btn.dataset.seg));
-});
-segButtons.forEach(btn=>{
-  btn.addEventListener("click", ()=> setActiveSegUI(btn.dataset.seg));
-});
+qSegButtons.forEach(btn=> btn.addEventListener("click", ()=> setActiveSegUI(btn.dataset.seg)));
+segButtons.forEach(btn=> btn.addEventListener("click", ()=> setActiveSegUI(btn.dataset.seg)));
 amountEl.addEventListener("input", validateSelection);
 
 /* ==============================
@@ -829,7 +896,7 @@ let angle=0, spinning=false, cx,cy,r, cssW=0;
 function getWrapWidth(){return Math.floor(document.querySelector(".wrap").getBoundingClientRect().width)}
 function setSize(){
   const dpr=window.devicePixelRatio||1;
-  const w=Math.min(520,Math.max(280,getWrapWidth()));
+  const w=Math.min(560,Math.max(280,getWrapWidth()));
   cssW=w;
   wheel.width=Math.floor(w*dpr); wheel.height=Math.floor(w*dpr);
   wheel.style.width=w+"px"; wheel.style.height=w+"px";
@@ -868,6 +935,7 @@ function draw(a){
     ctx.restore();
   }
 
+  // aro + luces
   ctx.beginPath();
   ctx.lineWidth=Math.max(8,r*0.04);
   ctx.strokeStyle="rgba(255,255,255,.14)";
@@ -885,6 +953,7 @@ function draw(a){
     ctx.fill();
   }
 
+  // centro
   const rCenter=cssW<=360?Math.max(26,r*.085):cssW<=420?Math.max(30,r*.095):Math.max(34,r*.105);
   ctx.beginPath();ctx.arc(cx,cy,rCenter,0,Math.PI*2);
   ctx.fillStyle="#0a0f1f";ctx.fill();
@@ -952,7 +1021,7 @@ closeModalX.onclick=closeModal;
 modal.addEventListener("click",(e)=>{ if(e.target===modal) closeModal(); });
 
 /* ==============================
-   Countdown fin de día
+   Countdown fin de día (solo menú)
 ================================ */
 function endOfDay(){
   const n=new Date();
@@ -965,9 +1034,12 @@ function tickCountdown(){
   const h=Math.floor(total/3600),
         m=Math.floor((total%3600)/60),
         s=total%60;
-  document.getElementById("countdown").textContent =
-    h>0 ? `${h}:${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`
-        : `${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`;
+
+  const txt = h>0 ? `${h}:${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`
+                  : `${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`;
+
+  const side = document.getElementById("countdownSide");
+  if(side) side.textContent = txt;
 }
 
 /* ==============================
