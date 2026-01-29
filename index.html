@@ -62,18 +62,13 @@ body::before{
   border-radius:14px;
   background:linear-gradient(180deg, rgba(124,77,255,.10), rgba(34,211,238,.06));
 }
-.brand{
-  display:flex; align-items:center; gap:10px; min-width:0;
-}
+.brand{display:flex; align-items:center; gap:10px; min-width:0;}
 .brand img{
   height:42px; width:auto; display:block;
   filter:drop-shadow(0 3px 10px rgba(0,0,0,.55));
 }
 @media(max-width:420px){ .brand img{height:38px} }
-
-.tagline{
-  display:flex; gap:10px; align-items:center; margin-left:auto;
-}
+.tagline{display:flex; gap:10px; align-items:center; margin-left:auto;}
 .pill{
   display:inline-flex; gap:8px; align-items:center;
   padding:6px 10px; border-radius:999px;
@@ -124,12 +119,8 @@ h1,h2,h3,p{margin:0 0 8px}
 h1{font-size:20px}
 .muted{color:var(--muted)}
 
-.selector{
-  display:grid; gap:10px;
-}
-.row{
-  display:flex; gap:10px; align-items:center; flex-wrap:wrap;
-}
+.selector{display:grid; gap:10px;}
+.row{display:flex; gap:10px; align-items:center; flex-wrap:wrap;}
 .field{
   flex:1;
   display:flex; gap:10px; align-items:center;
@@ -146,8 +137,9 @@ h1{font-size:20px}
   font-size:16px;
 }
 .field .hint{font-size:12px;color:var(--muted)}
+
 .segBtns{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px}
-@media(max-width:520px){ .segBtns{grid-template-columns:minmax(0,1fr)} }
+@media(max-width:520px){ .segBtns{grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px} }
 
 .seg{
   appearance:none; border:none; cursor:pointer;
@@ -166,6 +158,51 @@ h1{font-size:20px}
 .seg.active{
   border-color:rgba(34,211,238,.55);
   box-shadow:0 14px 28px rgba(0,0,0,.32);
+  background:linear-gradient(180deg, rgba(34,211,238,.14), rgba(124,77,255,.08));
+}
+
+/* ==== BARRA RÁPIDA ARRIBA (sticky) ==== */
+.quickBar{
+  position:sticky;
+  top:8px;
+  z-index:25;
+  margin-top:10px;
+}
+.quickInner{
+  border:1px solid var(--border);
+  border-radius:16px;
+  background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
+  box-shadow:0 12px 30px rgba(0,0,0,.35);
+  padding:10px;
+  backdrop-filter: blur(6px);
+}
+.quickTop{
+  display:flex; align-items:center; justify-content:space-between; gap:10px;
+  margin-bottom:8px;
+}
+.quickTop .ttl{font-weight:900}
+.quickTop .sub{color:var(--muted); font-size:12px}
+@media(max-width:420px){
+  .quickTop{flex-direction:column; align-items:flex-start; gap:4px}
+}
+.quickSegBtns{
+  display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px;
+}
+@media(max-width:520px){ .quickSegBtns{gap:8px} }
+.qseg{
+  appearance:none;border:none;cursor:pointer;
+  padding:10px 10px;border-radius:14px;
+  border:1px solid var(--border);
+  background:rgba(255,255,255,.03);
+  color:var(--text);
+  font-weight:900;
+  text-align:center;
+  transition:transform .08s ease, filter .08s ease, border-color .12s ease;
+}
+.qseg:hover{transform:translateY(-1px);filter:brightness(1.05)}
+.qseg small{display:block;font-weight:700;color:var(--muted);font-size:11px;margin-top:2px}
+.qseg.active{
+  border-color:rgba(34,211,238,.55);
   background:linear-gradient(180deg, rgba(34,211,238,.14), rgba(124,77,255,.08));
 }
 
@@ -195,7 +232,7 @@ h1{font-size:20px}
 
 /* Dock inferior */
 .dock{
-  position:fixed; left:0; right:0; bottom:0; z-index:20;
+  position:fixed; left:0; right:0; bottom:0; z-index:40;
   background:linear-gradient(180deg, rgba(7,10,24,0) 0%, rgba(7,10,24,.84) 22%, rgba(7,10,24,.95) 100%);
   padding:10px 14px 14px;
   display:flex; gap:10px; align-items:center;
@@ -222,7 +259,7 @@ h1{font-size:20px}
 }
 
 /* Confetti */
-.confetti{position:fixed;inset:0;pointer-events:none;z-index:40}
+.confetti{position:fixed;inset:0;pointer-events:none;z-index:50}
 .confetti i{
   position:absolute;top:-20px;width:10px;height:14px;border-radius:2px;opacity:0;
   animation:confFall 1.6s linear forwards;
@@ -249,10 +286,7 @@ h1{font-size:20px}
   padding:14px;
   box-shadow:0 22px 55px rgba(0,0,0,.55);
 }
-.modalHead{
-  display:flex; align-items:center; gap:10px;
-  margin-bottom:10px;
-}
+.modalHead{display:flex; align-items:center; gap:10px; margin-bottom:10px;}
 .modalHead h3{margin:0;font-size:18px}
 .closeX{margin-left:auto; cursor:pointer; opacity:.8}
 .closeX:hover{opacity:1}
@@ -268,11 +302,7 @@ h1{font-size:20px}
 .mrow .v{font-weight:900}
 .mActions{display:flex; gap:10px; margin-top:12px}
 @media(max-width:520px){ .mActions{flex-direction:column} }
-.btn.ghost{
-  background:transparent;
-  border:1px solid var(--border);
-  color:var(--text);
-}
+.btn.ghost{background:transparent;border:1px solid var(--border);color:var(--text);}
 .btn.platform{
   background:linear-gradient(90deg, rgba(124,77,255,.95), rgba(34,211,238,.92));
   color:#061018;
@@ -312,15 +342,38 @@ h1{font-size:20px}
     <!-- 1 línea -->
     <div class="topline">
       <div class="brand">
-        <!-- LOGO: recomendación -->
-        <!-- SVG/PNG: 320x120px (o similar) funciona perfecto. -->
-        <!-- Ponelo en la misma carpeta con nombre: logo.svg -->
+        <!-- LOGO: ideal SVG en 320x120 (aprox) -->
         <img id="logoImg" src="logo.svg" alt="BET300" onerror="this.style.display='none'">
       </div>
 
       <div class="tagline">
         <span class="pill time">⚡ Ventana activa <span class="count" id="countdown">--:--</span></span>
         <span class="pill sound" id="soundToggle">🔊 <b id="soundState">ON</b></span>
+      </div>
+    </div>
+
+    <!-- BARRA RÁPIDA ARRIBA: segmentos (sin scroll) -->
+    <div class="quickBar">
+      <div class="quickInner">
+        <div class="quickTop">
+          <div class="ttl">Elegí tu segmento</div>
+          <div class="sub">Básica / Pro / VIP · luego cargás el monto y girás</div>
+        </div>
+
+        <div class="quickSegBtns">
+          <button class="qseg" id="qBasic" data-seg="basic">
+            BÁSICA
+            <small>$5k–$9.999</small>
+          </button>
+          <button class="qseg" id="qPro" data-seg="pro">
+            PRO
+            <small>$10k–$49.999</small>
+          </button>
+          <button class="qseg" id="qVip" data-seg="vip">
+            VIP
+            <small>$50k+</small>
+          </button>
+        </div>
       </div>
     </div>
 
@@ -352,6 +405,7 @@ h1{font-size:20px}
             <input id="amount" inputmode="numeric" placeholder="Ej: 10000" />
           </div>
 
+          <!-- (Se mantiene acá también, pero ya no “obliga” a scrollear) -->
           <div class="segBtns">
             <button class="seg" id="segBasic" data-seg="basic">
               <b>BÁSICA</b>
@@ -441,8 +495,8 @@ document.getElementById("mPlatform").href = PLATFORM_UNIQUE;
 
 /* ==============================
    PREMIOS por segmento
-   - Base mínima: $5.000 (ya fijado)
-   - VIP: % único 30% con tope base $200.000 (o sea: bonus = min(monto,200000)*0.30)
+   - Base mínima: $5.000
+   - VIP: % único 30% con tope base $200.000 (bonus = min(monto,200000)*0.30)
 ================================ */
 const PRIZES = {
   basic: [
@@ -473,7 +527,6 @@ const PRIZES = {
   ]
 };
 
-// Paleta armónica (no se siente repetida)
 const COLORS = [
   "#22d3ee","#7c4dff","#ffd166","#16e2b6","#ff6ad5",
   "#8ab6ff","#4be1a0","#ffa3e0","#6ee7ff","#a78bfa",
@@ -519,7 +572,7 @@ async function makeClaimCode(payload){
 }
 
 /* ==============================
-   AUDIO (simple)
+   AUDIO
 ================================ */
 let soundOn = true;
 const soundToggle=document.getElementById("soundToggle");
@@ -538,13 +591,8 @@ const AudioKit=(()=>{
     g.gain.exponentialRampToValueAtTime(0.0001, t+dur);
     o.start(t); o.stop(t+dur);
   }
-  function spinStart(){
-    const id=setInterval(()=>click(820+Math.random()*160,0.03,0.045),95);
-    return ()=>clearInterval(id);
-  }
-  function win(){
-    [880,1175,1568].forEach((f,i)=>setTimeout(()=>click(f,0.12,0.09), i*130));
-  }
+  function spinStart(){ const id=setInterval(()=>click(820+Math.random()*160,0.03,0.045),95); return ()=>clearInterval(id); }
+  function win(){ [880,1175,1568].forEach((f,i)=>setTimeout(()=>click(f,0.12,0.09), i*130)); }
   return {unlock,spinStart,win};
 })();
 soundToggle.addEventListener("click",()=>{
@@ -570,6 +618,7 @@ const amountEl=document.getElementById("amount");
 const ruleLine=document.getElementById("ruleLine");
 
 const segButtons=[...document.querySelectorAll(".seg")];
+const qSegButtons=[...document.querySelectorAll(".qseg")];
 
 const modal=document.getElementById("prizeModal");
 const closeModalX=document.getElementById("closeModalX");
@@ -587,9 +636,8 @@ const mClaim=document.getElementById("mClaim");
 const MIN_BASE = 5000;
 
 const SEGMENTS = {
-  basic: { name:"BÁSICA", min:5000,  max:9999,  percentCapMoney: 3000, percentCapBase: null, percentMax: 50 },
-  pro:   { name:"PRO",    min:10000, max:49999, percentCapMoney: 10000, percentCapBase: null, percentMax: 50 },
-  // VIP pedido: tope hasta cargas $200.000 al 30%
+  basic: { name:"BÁSICA", min:5000,  max:9999,  percentCapMoney: 3000,  percentCapBase: null,   percentMax: 50 },
+  pro:   { name:"PRO",    min:10000, max:49999, percentCapMoney: 10000, percentCapBase: null,   percentMax: 50 },
   vip:   { name:"VIP",    min:50000, max:Infinity, percentCapMoney: null, percentCapBase: 200000, percentMax: 30 }
 };
 
@@ -604,10 +652,28 @@ function sanitizeAmount(){
   return raw ? Number(raw) : 0;
 }
 
+/* ==== Sync helpers (botones arriba + panel) ==== */
+function setActiveSegUI(seg){
+  selectedSegment = seg;
+  currentPrizes = PRIZES[selectedSegment];
+
+  // Activo en ambos sets
+  segButtons.forEach(b=>b.classList.toggle("active", b.dataset.seg===seg));
+  qSegButtons.forEach(b=>b.classList.toggle("active", b.dataset.seg===seg));
+
+  // Reset visual premio (no toca persistencia)
+  badge.textContent="-";
+  stampEl.textContent="";
+  title.textContent="Tenés 1 giro disponible";
+  claimBtn.disabled=true;
+
+  draw(angle);
+  validateSelection();
+}
+
 function validateSelection(){
   const amt = sanitizeAmount();
 
-  // segmento elegido?
   if(!selectedSegment){
     spinBtn.disabled=true;
     subtitle.innerHTML="Elegí tu monto + segmento para habilitar el giro.";
@@ -615,7 +681,6 @@ function validateSelection(){
     return;
   }
 
-  // base mínima
   if(amt < MIN_BASE){
     spinBtn.disabled=true;
     subtitle.innerHTML=`La carga mínima para jugar es <b>${money(MIN_BASE)}</b>.`;
@@ -623,7 +688,6 @@ function validateSelection(){
     return;
   }
 
-  // rango del segmento
   const seg = SEGMENTS[selectedSegment];
   if(amt < seg.min || amt > seg.max){
     spinBtn.disabled=true;
@@ -632,7 +696,6 @@ function validateSelection(){
     return;
   }
 
-  // giro disponible?
   const used = getSpinCountToday();
   const maxSpins = getMaxSpinsToday();
   if(used >= maxSpins){
@@ -644,7 +707,6 @@ function validateSelection(){
 
   spinBtn.disabled=false;
 
-  // regla de % visible
   if(selectedSegment==="vip"){
     ruleLine.textContent = `VIP: % se calcula sobre base hasta ${money(seg.percentCapBase)} (máx ${seg.percentMax}%).`;
   }else{
@@ -654,31 +716,20 @@ function validateSelection(){
   subtitle.innerHTML = `Girás en <b>${seg.name}</b>. Premios se acreditan con tu próxima carga.`;
 }
 
-segButtons.forEach(btn=>{
-  btn.addEventListener("click",()=>{
-    segButtons.forEach(b=>b.classList.remove("active"));
-    btn.classList.add("active");
-    selectedSegment = btn.dataset.seg;
-    currentPrizes = PRIZES[selectedSegment];
-    // reset UI premio visible
-    badge.textContent="-";
-    stampEl.textContent="";
-    title.textContent="Tenés 1 giro disponible";
-    claimBtn.disabled=true;
-    draw(angle); // re-dibuja con premios nuevos
-    validateSelection();
-  });
+/* Click en botones de arriba */
+qSegButtons.forEach(btn=>{
+  btn.addEventListener("click", ()=> setActiveSegUI(btn.dataset.seg));
 });
 
-amountEl.addEventListener("input", ()=>{
-  validateSelection();
+/* Click en botones del panel */
+segButtons.forEach(btn=>{
+  btn.addEventListener("click", ()=> setActiveSegUI(btn.dataset.seg));
 });
+
+amountEl.addEventListener("input", validateSelection);
 
 /* ==============================
-   Persistencia por día:
-   - ruleta_done_count: cantidad de giros usados hoy
-   - ruleta_max_spins: default 1; si sale "Otra chance" se setea a 2
-   - ruleta_payload: último premio asignado (para restaurar)
+   Persistencia por día
 ================================ */
 function storageKey(s){ return `ruleta_${s}`; }
 
@@ -702,29 +753,26 @@ function restorePayloadIfAny(){
   if(!payload) return;
   try{
     const data = JSON.parse(payload);
-    // restaurar selector
+
     if(data.segment && PRIZES[data.segment]){
-      selectedSegment = data.segment;
-      currentPrizes = PRIZES[selectedSegment];
-      segButtons.forEach(b=>b.classList.toggle("active", b.dataset.seg===selectedSegment));
+      setActiveSegUI(data.segment);
     }
     if(data.amount) amountEl.value = String(data.amount);
 
-    // restaurar UI
     const code = localStorage.getItem(storageKey("code")) || "—";
     const ts   = localStorage.getItem(storageKey("ts"))   || tsString();
-    const segN = SEGMENTS[selectedSegment]?.name || "—";
 
     badge.textContent = data.prizeLabel || "—";
     title.textContent = "🎉 ¡Premio asignado!";
     subtitle.innerHTML = data.subtitleHTML || `Reclamá tu premio o entrá a la plataforma.`;
     stampEl.textContent = `Código: ${code} · ${ts}`;
 
-    // botones
+    const segN = SEGMENTS[selectedSegment]?.name || "—";
     const msg = whatsappText(data.prizeLabel, segN, data.amount);
     claimBtn.disabled = false;
     claimBtn.onclick = ()=>location.href=`https://wa.me/${WP}?text=${encodeURIComponent(msg)}`;
 
+    validateSelection();
   }catch(e){}
 }
 
@@ -772,13 +820,11 @@ function draw(a){
     ctx.save();
     ctx.translate(cx,cy);
     ctx.rotate(s+arc/2);
-
-    // texto: sombra ligera y mejor contraste
     ctx.textAlign="right";
     ctx.font=font;
 
     ctx.fillStyle="rgba(0,0,0,.35)";
-    ctx.fillText(txt, r-18, 10+1);
+    ctx.fillText(txt, r-18, 11);
 
     ctx.fillStyle="#061018";
     ctx.fillText(txt, r-18, 10);
@@ -818,7 +864,7 @@ function normAngle(rad){ const T=Math.PI*2; return ((rad%T)+T)%T; }
 function winnerIndexByAngle(a){
   const n=currentPrizes.length;
   const arc=(Math.PI*2)/n;
-  const pointer=Math.PI*1.5; // 12 en punto
+  const pointer=Math.PI*1.5;
   const rel=normAngle(pointer - a);
   return Math.floor(rel/arc)%n;
 }
@@ -898,22 +944,16 @@ document.addEventListener("click",()=>AudioKit.unlock(),{once:true});
 
 function percentBonus(amount, percent, segmentKey){
   const seg = SEGMENTS[segmentKey];
-
   if(segmentKey==="vip"){
-    const base = Math.min(amount, seg.percentCapBase); // tope base 200.000
-    const p = Math.min(percent, seg.percentMax);       // max 30
+    const base = Math.min(amount, seg.percentCapBase);
+    const p = Math.min(percent, seg.percentMax);
     return Math.floor(base * (p/100));
   }
-
-  // basic/pro: % con tope de bonificación monetaria
   const raw = Math.floor(amount * (percent/100));
   return Math.min(raw, seg.percentCapMoney);
 }
-
 function buildSubtitle(prize, amount, segmentKey){
-  if(prize.type==="money"){
-    return `Recibís <b>${money(prize.value)} extra</b> con tu próxima carga.`;
-  }
+  if(prize.type==="money") return `Recibís <b>${money(prize.value)} extra</b> con tu próxima carga.`;
   if(prize.type==="percent"){
     const bonus = percentBonus(amount, prize.value, segmentKey);
     if(segmentKey==="vip"){
@@ -921,9 +961,7 @@ function buildSubtitle(prize, amount, segmentKey){
     }
     return `Recibís <b>${prize.value}% extra</b> → <b>${money(bonus)} extra</b> (aplica tope del segmento).`;
   }
-  if(prize.type==="other"){
-    return `Te habilita un <b>2º tiro</b> hoy.`;
-  }
+  if(prize.type==="other") return `Te habilita un <b>2º tiro</b> hoy.`;
   return `Premio asignado.`;
 }
 
@@ -932,7 +970,6 @@ spinBtn.addEventListener("click", async ()=>{
 
   resetIfNewDay();
 
-  // selección valida
   const amount = sanitizeAmount();
   if(!selectedSegment){ alert("Elegí un segmento."); return; }
   if(amount < MIN_BASE){ alert(`Carga mínima ${money(MIN_BASE)}.`); return; }
@@ -943,7 +980,6 @@ spinBtn.addEventListener("click", async ()=>{
     return;
   }
 
-  // control giros por día
   const used = getSpinCountToday();
   const maxSpins = getMaxSpinsToday();
   if(used >= maxSpins){
@@ -969,33 +1005,25 @@ spinBtn.addEventListener("click", async ()=>{
     const idx = winnerIndexByAngle(angle);
     const prize = currentPrizes[idx];
 
-    // lógica premio
     let prizeLabel = prize.label;
-
-    // si es %: mostrar también el equivalente en $ (para que sea “vendible”)
     let subtitleHTML = buildSubtitle(prize, amount, selectedSegment);
 
-    // “Otra chance”: habilitar 2 tiros máximo
     if(prize.type==="other"){
       setMaxSpinsToday(2);
     }
 
-    // código antifraude
     const segName = SEGMENTS[selectedSegment].name;
     const payloadForCode = `${segName}|amt:${amount}|prize:${prizeLabel}`;
     const code = await makeClaimCode(payloadForCode);
     const ts = tsString(new Date());
 
-    // persistir
     localStorage.setItem(storageKey("segment"), selectedSegment);
     localStorage.setItem(storageKey("amount"), String(amount));
     localStorage.setItem(storageKey("code"), code);
     localStorage.setItem(storageKey("ts"), ts);
 
-    // contar tiro usado
     setSpinCountToday(used + 1);
 
-    // guardar payload para restaurar al refrescar
     localStorage.setItem(storageKey("payload"), JSON.stringify({
       segment: selectedSegment,
       amount,
@@ -1003,26 +1031,22 @@ spinBtn.addEventListener("click", async ()=>{
       subtitleHTML
     }));
 
-    // UI
     badge.textContent = prizeLabel;
     title.textContent = "🎉 ¡Premio asignado!";
     subtitle.innerHTML = subtitleHTML;
     stampEl.textContent = `Código: ${code} · ${ts}`;
 
-    // botones
     const msg = whatsappText(prizeLabel, segName, amount);
     claimBtn.disabled = false;
     claimBtn.onclick = ()=>location.href=`https://wa.me/${WP}?text=${encodeURIComponent(msg)}`;
 
-    // sonido/fx
     if(soundOn){ if(stopTicks) stopTicks(); AudioKit.win(); }
     confettiBurst();
 
-    // modal (siempre)
     openModal({ segName, amount, prizeLabel, code, ts });
 
     spinning=false;
-    validateSelection(); // re-habilita si todavía queda “otra chance”
+    validateSelection();
   });
 });
 
@@ -1036,7 +1060,6 @@ function scheduleMidnightReset(){
     ["done_count","max_spins","payload","code","ts","segment","amount"].forEach(k=>localStorage.removeItem(storageKey(k)));
     localStorage.setItem(storageKey("date"), todayKey());
 
-    // UI
     badge.textContent="-";
     title.textContent="Tenés 1 giro disponible";
     subtitle.innerHTML="Elegí tu monto + segmento para habilitar el giro.";
@@ -1057,8 +1080,8 @@ function init(){
   setInterval(tickCountdown, 1000);
   scheduleMidnightReset();
 
-  // defaults: sin segmento seleccionado
-  setMaxSpinsToday(getMaxSpinsToday() || 1);
+  // default max spins (si no existe)
+  if(!localStorage.getItem(storageKey("max_spins"))) setMaxSpinsToday(1);
 
   restorePayloadIfAny();
   validateSelection();
