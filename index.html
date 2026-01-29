@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>BET300 · Ruleta Progresiva</title>
 <meta name="theme-color" content="#070a18"/>
+
 <style>
 :root{
   --bg:#070a18;
@@ -20,7 +21,9 @@
   --neon:#22d3ee;         /* Reclamar */
   --neon2:#06b6d4;
 
-  --ok:#22c55e;
+  --ok:#22c55e;           /* VERDE FLÚOR selección */
+  --ok2:#16a34a;
+
   --danger:#fb7185;
 }
 
@@ -41,6 +44,7 @@ body::before{
     radial-gradient(620px 360px at 0% 100%, rgba(255,209,102,.10), transparent),
     linear-gradient(180deg,#070a18 0%,#070a18 62%,#050716 100%);
 }
+
 .container{max-width:980px;margin:10px auto 96px;padding:0 14px}
 .card{
   background: radial-gradient(120% 100% at 50% 0%, rgba(124,77,255,.10), transparent), var(--panel2);
@@ -54,8 +58,9 @@ body::before{
   .card{border-radius:0;border-left:0;border-right:0;padding:12px}
 }
 
-/* Header ultra compacto (1 línea) */
+/* Header ultra compacto */
 .topline{
+  position:relative;
   display:flex; align-items:center; gap:10px;
   padding:8px 10px;
   border:1px solid var(--border);
@@ -64,45 +69,71 @@ body::before{
 }
 .brand{display:flex; align-items:center; gap:10px; min-width:0;}
 .brand img{
-  height:48px; width:auto; display:block;
+  height:44px; width:auto; display:block;
   filter:drop-shadow(0 3px 10px rgba(0,0,0,.55));
 }
-@media(max-width:420px){ .brand img{height:44px} }
-.tagline{display:flex; gap:10px; align-items:center; margin-left:auto;}
+@media(max-width:420px){ .brand img{height:40px} }
 
-/* Botón menú */
-.gear{
-  appearance:none;border:1px solid var(--border);
+h1,h2,h3,p{margin:0 0 8px}
+h1{font-size:20px}
+.muted{color:var(--muted)}
+
+/* ===== Menú lateral (oculta "ventana activa" y sonido) ===== */
+.menuBtn{
+  position:absolute;
+  right:10px; top:50%;
+  transform:translateY(-50%);
+  appearance:none;border:none;cursor:pointer;
+  width:42px;height:36px;border-radius:12px;
+  border:1px solid var(--border);
   background:rgba(255,255,255,.04);
   color:var(--text);
-  border-radius:12px;
-  padding:8px 10px;
-  font-weight:900;
-  cursor:pointer;
+  display:grid;place-items:center;
+  box-shadow:0 10px 24px rgba(0,0,0,.25);
 }
-.gear:hover{filter:brightness(1.08)}
-
+.menuBtn:hover{filter:brightness(1.06)}
+.menuPanel{
+  position:fixed; top:0; right:-320px; height:100%;
+  width:min(320px,86vw);
+  background:linear-gradient(180deg, rgba(11,16,38,.96), rgba(2,6,23,.96));
+  border-left:1px solid var(--border);
+  box-shadow:-22px 0 55px rgba(0,0,0,.55);
+  z-index:80;
+  padding:14px;
+  transition:right .18s ease;
+  backdrop-filter: blur(8px);
+}
+.menuPanel.show{right:0}
+.menuTop{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.menuTop b{font-size:14px}
+.menuClose{
+  margin-left:auto; cursor:pointer; opacity:.85;
+  padding:6px 10px;border-radius:10px;border:1px solid var(--border);
+  background:rgba(255,255,255,.04);
+}
+.menuClose:hover{opacity:1}
+.menuItems{display:grid;gap:10px;margin-top:10px}
 .pill{
-  display:inline-flex; gap:8px; align-items:center;
-  padding:6px 10px; border-radius:999px;
+  display:flex; gap:10px; align-items:center; justify-content:space-between;
+  padding:10px 12px; border-radius:14px;
   border:1px solid var(--border);
   background:rgba(255,255,255,.04);
   color:var(--muted);
-  font-size:12px;
-  white-space:nowrap;
+  font-size:13px;
 }
 .count{
   display:inline-flex; align-items:center; gap:6px;
-  padding:3px 8px; border-radius:999px;
+  padding:4px 10px; border-radius:999px;
   background:rgba(255,209,102,.14);
   border:1px solid rgba(255,209,102,.35);
   color:#ffe9a3;
-  font-weight:800;
+  font-weight:900;
   font-variant-numeric:tabular-nums;
 }
 .pill.sound{cursor:pointer; user-select:none}
 .pill.sound:hover{filter:brightness(1.08)}
 
+/* Layout principal */
 .grid{display:grid; gap:14px; grid-template-columns:minmax(0,1fr)}
 @media(min-width:900px){ .grid{grid-template-columns:1.15fr .85fr} }
 
@@ -113,11 +144,9 @@ body::before{
   padding:14px;
 }
 
-/* Ruleta más arriba y mejor centrada */
-.panel.wheelPanel{padding:10px 10px 6px}
-.stage{position:relative; display:flex; align-items:center; justify-content:center; padding-top:4px}
-.wrap{width:100%; max-width:540px; margin:auto; position:relative}
-
+/* Ruleta: subimos un poco */
+.stage{position:relative; display:flex; align-items:center; justify-content:center; margin-top:2px}
+.wrap{width:100%; max-width:520px; margin:auto; position:relative}
 canvas{width:100%; height:auto; display:block}
 .pointer{
   position:absolute; top:6px; left:50%; transform:translateX(-50%);
@@ -131,14 +160,10 @@ canvas{width:100%; height:auto; display:block}
   .pointer{border-left:12px solid transparent;border-right:12px solid transparent;border-bottom:22px solid #22d3ee;top:4px}
 }
 
-h1,h2,h3,p{margin:0 0 8px}
-h1{font-size:20px}
-.muted{color:var(--muted)}
-
+/* Selector */
 .selector{display:grid; gap:10px;}
-.row{display:flex; gap:10px; align-items:center; flex-wrap:wrap;}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
 .field{
-  flex:1;
   display:flex; gap:10px; align-items:center;
   padding:10px 12px;
   border-radius:14px;
@@ -154,9 +179,9 @@ h1{font-size:20px}
 }
 .field .hint{font-size:12px;color:var(--muted)}
 
+/* Segmentos (panel derecha) */
 .segBtns{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px}
 @media(max-width:520px){ .segBtns{grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px} }
-
 .seg{
   appearance:none; border:none; cursor:pointer;
   padding:12px 12px;
@@ -166,15 +191,18 @@ h1{font-size:20px}
   color:var(--text);
   box-shadow:0 10px 26px rgba(0,0,0,.25);
   text-align:left;
-  transition:transform .08s ease, filter .08s ease, border-color .12s ease;
+  transition:transform .08s ease, filter .08s ease, border-color .12s ease, box-shadow .12s ease;
 }
 .seg:hover{transform:translateY(-1px); filter:brightness(1.05)}
 .seg b{display:block; font-size:14px}
 .seg small{display:block; color:var(--muted); margin-top:2px; font-size:12px; line-height:1.25}
 .seg.active{
-  border-color:rgba(34,211,238,.55);
-  box-shadow:0 14px 28px rgba(0,0,0,.32);
-  background:linear-gradient(180deg, rgba(34,211,238,.14), rgba(124,77,255,.08));
+  border-color:rgba(34,197,94,.70);
+  box-shadow:
+    0 14px 28px rgba(0,0,0,.32),
+    0 0 0 2px rgba(34,197,94,.18),
+    0 0 24px rgba(34,197,94,.22);
+  background:linear-gradient(180deg, rgba(34,197,94,.16), rgba(124,77,255,.08));
 }
 
 /* ==== BARRA RÁPIDA ARRIBA (sticky) ==== */
@@ -213,15 +241,31 @@ h1{font-size:20px}
   color:var(--text);
   font-weight:900;
   text-align:center;
-  transition:transform .08s ease, filter .08s ease, border-color .12s ease;
+  transition:transform .08s ease, filter .08s ease, border-color .12s ease, box-shadow .12s ease;
 }
 .qseg:hover{transform:translateY(-1px);filter:brightness(1.05)}
 .qseg small{display:block;font-weight:700;color:var(--muted);font-size:11px;margin-top:2px}
 .qseg.active{
-  border-color:rgba(34,211,238,.55);
-  background:linear-gradient(180deg, rgba(34,211,238,.14), rgba(124,77,255,.08));
+  border-color:rgba(34,197,94,.70);
+  background:linear-gradient(180deg, rgba(34,197,94,.16), rgba(124,77,255,.08));
+  box-shadow:0 0 0 2px rgba(34,197,94,.16), 0 0 22px rgba(34,197,94,.18);
 }
 
+/* Montito arriba (debajo de segmentos) */
+.quickAmount{
+  margin-top:10px;
+  border:1px solid rgba(34,197,94,.18);
+  border-radius:16px;
+  padding:10px;
+  background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+}
+.quickAmount .field{
+  margin:0;
+  border-color:rgba(255,255,255,.10);
+}
+.quickHelp{margin:8px 2px 0;font-size:12px;color:var(--muted)}
+
+/* Estado */
 .stat{
   display:flex; gap:12px; align-items:center; justify-content:center;
   margin:10px 0 14px;
@@ -323,81 +367,29 @@ h1{font-size:20px}
   background:linear-gradient(90deg, rgba(124,77,255,.95), rgba(34,211,238,.92));
   color:#061018;
 }
-
-/* ==== MENÚ LATERAL ==== */
-.sideOverlay{
-  position:fixed; inset:0; z-index:60;
-  background:rgba(0,0,0,.45);
-  backdrop-filter: blur(3px);
-}
-.sideMenu{
-  position:fixed; top:0; right:0; height:100vh;
-  width:min(340px,88vw);
-  transform:translateX(110%);
-  transition:transform .18s ease;
-  z-index:65;
-  padding:12px;
-}
-.sideMenu.show{transform:translateX(0)}
-.sideCard{
-  height:100%;
-  background: radial-gradient(120% 100% at 50% 0%, rgba(57,255,136,.08), transparent), var(--panel2);
-  border:1px solid var(--border);
-  border-radius:18px;
-  padding:14px;
-  box-shadow:0 22px 55px rgba(0,0,0,.55);
-}
-.sideHead{
-  display:flex; align-items:center; justify-content:space-between;
-  margin-bottom:10px;
-}
-.sideClose{
-  appearance:none;border:1px solid var(--border);
-  background:rgba(255,255,255,.04);
-  color:var(--text);
-  border-radius:10px;
-  padding:6px 10px;
-  cursor:pointer;
-}
-.sideItem{
-  display:flex; align-items:center; justify-content:space-between;
-  gap:10px;
-  padding:10px 12px;
-  border-radius:14px;
-  border:1px solid rgba(255,255,255,.10);
-  background:rgba(255,255,255,.03);
-  margin-top:10px;
-}
 </style>
 </head>
-<body>
 
+<body>
 <div id="confetti" class="confetti" aria-hidden="true"></div>
 
 <!-- MENÚ LATERAL -->
-<div id="sideMenu" class="sideMenu" aria-hidden="true">
-  <div class="sideCard">
-    <div class="sideHead">
-      <b>Opciones</b>
-      <button class="sideClose" id="closeMenu" aria-label="Cerrar">✖</button>
-    </div>
-
-    <div class="sideItem">
+<div id="sideMenu" class="menuPanel" aria-hidden="true">
+  <div class="menuTop">
+    <b>Opciones</b>
+    <span id="closeMenu" class="menuClose">Cerrar ✖</span>
+  </div>
+  <div class="menuItems">
+    <div class="pill">
       <span>⚡ Ventana activa</span>
-      <span class="count" id="countdownSide">--:--</span>
+      <span class="count" id="countdown">--:--</span>
     </div>
-
-    <div class="sideItem">
+    <div class="pill sound" id="soundToggle">
       <span>🔊 Sonido</span>
-      <button class="pill sound" id="soundToggleSide"><b id="soundStateSide">ON</b></button>
-    </div>
-
-    <div class="muted" style="font-size:12px; margin-top:10px;">
-      *1 giro por día (salvo “Otra chance”).
+      <span><b id="soundState">ON</b></span>
     </div>
   </div>
 </div>
-<div id="sideOverlay" class="sideOverlay" hidden></div>
 
 <!-- MODAL -->
 <div id="prizeModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
@@ -426,24 +418,21 @@ h1{font-size:20px}
 <div class="container">
   <div class="card">
 
-    <!-- 1 línea -->
+    <!-- Header 1 línea: logo + botón menú -->
     <div class="topline">
       <div class="brand">
-        <!-- LOGO: en la misma carpeta que index.html -> logo.svg -->
-        <img id="logoImg" src="logo.svg" alt="BET300" onerror="this.style.display='none'">
+        <!-- Logo en la misma carpeta que index.html -->
+        <img id="logoImg" src="./logo.svg" alt="BET300" onerror="this.style.display='none'">
       </div>
-
-      <div class="tagline">
-        <button class="gear" id="openMenu" aria-label="Abrir menú">⚙️</button>
-      </div>
+      <button id="menuBtn" class="menuBtn" aria-label="Abrir menú">☰</button>
     </div>
 
-    <!-- BARRA RÁPIDA ARRIBA: segmentos (sin scroll) -->
+    <!-- Sticky: Segmento + Monto (arriba, NO abajo) -->
     <div class="quickBar">
       <div class="quickInner">
         <div class="quickTop">
           <div class="ttl">Elegí tu segmento</div>
-          <div class="sub">Básica / Pro / VIP · luego cargás el monto y girás</div>
+          <div class="sub">Básica / Pro / VIP · luego elegís el monto</div>
         </div>
 
         <div class="quickSegBtns">
@@ -460,30 +449,9 @@ h1{font-size:20px}
             <small>$50k+</small>
           </button>
         </div>
-      </div>
-    </div>
 
-    <div class="grid" style="margin-top:12px">
-
-      <!-- IZQ: ruleta -->
-      <div class="panel wheelPanel">
-        <div class="stage">
-          <div class="wrap">
-            <canvas id="wheel" width="620" height="620"></canvas>
-            <div class="pointer" aria-hidden="true"></div>
-          </div>
-        </div>
-        <p class="muted" style="margin-top:8px;font-size:12px;text-align:center">
-          Tip: elegí tu monto y segmento antes de girar. 1 giro por día (salvo “Otra chance”).
-        </p>
-      </div>
-
-      <!-- DER: selector + estado -->
-      <div class="panel">
-        <div class="selector">
-          <h1>Beneficio progresivo</h1>
-          <p class="muted" style="margin-top:-2px">Base mínima: <b>$5.000</b>. Elegís tu carga y girás en tu segmento.</p>
-
+        <!-- MONTO (debajo de botones, sticky) -->
+        <div class="quickAmount">
           <div class="field">
             <div style="min-width:110px">
               <div style="font-weight:900">Tu carga</div>
@@ -491,8 +459,32 @@ h1{font-size:20px}
             </div>
             <input id="amount" inputmode="numeric" placeholder="Ej: 10000" />
           </div>
+          <div class="quickHelp">*Ingresá el monto y girá. Se valida según el segmento elegido.</div>
+        </div>
+      </div>
+    </div>
 
-          <!-- (Se mantiene acá también) -->
+    <div class="grid" style="margin-top:12px">
+      <!-- IZQ: ruleta -->
+      <div class="panel">
+        <div class="stage">
+          <div class="wrap">
+            <canvas id="wheel" width="620" height="620"></canvas>
+            <div class="pointer" aria-hidden="true"></div>
+          </div>
+        </div>
+        <p class="muted" style="margin-top:10px;font-size:12px;text-align:center">
+          Tip: elegí tu monto y segmento antes de girar. 1 giro por día (salvo “Otra chance”).
+        </p>
+      </div>
+
+      <!-- DER: info + segment (se mantiene) + estado -->
+      <div class="panel">
+        <div class="selector">
+          <h1>Beneficio progresivo</h1>
+          <p class="muted" style="margin-top:-2px">Base mínima: <b>$5.000</b>. Elegís tu carga y girás en tu segmento.</p>
+
+          <!-- Se mantiene también el selector acá (no “obliga” a scrollear) -->
           <div class="segBtns">
             <button class="seg" id="segBasic" data-seg="basic">
               <b>BÁSICA</b>
@@ -524,7 +516,8 @@ h1{font-size:20px}
             <div class="v" id="ruleLine">—</div>
             <div class="k" style="margin-top:6px">Acceso directo</div>
             <div class="row">
-              <a id="platformBtn" class="btn platform" href="#" target="_blank" rel="noopener" style="text-decoration:none;display:inline-flex;align-items:center;justify-content:center;flex:1">
+              <a id="platformBtn" class="btn platform" href="#" target="_blank" rel="noopener"
+                 style="text-decoration:none;display:inline-flex;align-items:center;justify-content:center;flex:1">
                 🎮 Entrar a la plataforma
               </a>
             </div>
@@ -536,8 +529,8 @@ h1{font-size:20px}
           </p>
         </div>
       </div>
-
     </div>
+
   </div>
 </div>
 
@@ -658,42 +651,11 @@ async function makeClaimCode(payload){
 }
 
 /* ==============================
-   MENÚ LATERAL (abrir/cerrar)
-================================ */
-const sideMenu = document.getElementById("sideMenu");
-const sideOverlay = document.getElementById("sideOverlay");
-const openMenuBtn = document.getElementById("openMenu");
-const closeMenuBtn = document.getElementById("closeMenu");
-
-function openMenu(){
-  sideMenu?.classList.add("show");
-  if(sideOverlay) sideOverlay.hidden=false;
-}
-function closeMenu(){
-  sideMenu?.classList.remove("show");
-  if(sideOverlay) sideOverlay.hidden=true;
-}
-openMenuBtn?.addEventListener("click", openMenu);
-closeMenuBtn?.addEventListener("click", closeMenu);
-sideOverlay?.addEventListener("click", closeMenu);
-
-/* ==============================
-   AUDIO + UI (solo menú lateral)
+   AUDIO
 ================================ */
 let soundOn = true;
-
-const soundToggleSide=document.getElementById("soundToggleSide");
-const soundStateSide=document.getElementById("soundStateSide");
-
-function syncSoundUI(){
-  if(soundStateSide) soundStateSide.textContent = soundOn ? "ON" : "OFF";
-}
-function toggleSound(){
-  soundOn = !soundOn;
-  syncSoundUI();
-}
-soundToggleSide?.addEventListener("click", toggleSound);
-syncSoundUI();
+const soundToggle=document.getElementById("soundToggle");
+const soundState=document.getElementById("soundState");
 
 const AudioKit=(()=>{
   const Ctx=window.AudioContext||window.webkitAudioContext;
@@ -712,6 +674,32 @@ const AudioKit=(()=>{
   function win(){ [880,1175,1568].forEach((f,i)=>setTimeout(()=>click(f,0.12,0.09), i*130)); }
   return {unlock,spinStart,win};
 })();
+soundToggle.addEventListener("click",()=>{
+  soundOn=!soundOn;
+  soundState.textContent=soundOn?"ON":"OFF";
+});
+
+/* ==============================
+   MENÚ LATERAL
+================================ */
+const sideMenu = document.getElementById("sideMenu");
+const menuBtn  = document.getElementById("menuBtn");
+const closeMenu= document.getElementById("closeMenu");
+
+menuBtn.addEventListener("click", ()=>{
+  sideMenu.classList.add("show");
+  sideMenu.setAttribute("aria-hidden","false");
+});
+closeMenu.addEventListener("click", ()=>{
+  sideMenu.classList.remove("show");
+  sideMenu.setAttribute("aria-hidden","true");
+});
+document.addEventListener("keydown",(e)=>{
+  if(e.key==="Escape"){
+    sideMenu.classList.remove("show");
+    sideMenu.setAttribute("aria-hidden","true");
+  }
+});
 
 /* ==============================
    UI refs
@@ -750,7 +738,7 @@ const MIN_BASE = 5000;
 
 const SEGMENTS = {
   basic: { name:"BÁSICA", min:5000,  max:9999,  percentCapMoney: 3000,  percentCapBase: null,    percentMax: 50 },
-  pro:   { name:"PRO",    min:10000, max:49999, percentCapMoney: 10000, percentCapBase: null,   percentMax: 50 },
+  pro:   { name:"PRO",    min:10000, max:49999, percentCapMoney: 10000, percentCapBase: null,    percentMax: 50 },
   vip:   { name:"VIP",    min:50000, max:Infinity, percentCapMoney: null, percentCapBase: 200000, percentMax: 30 }
 };
 
@@ -765,7 +753,6 @@ function sanitizeAmount(){
   return raw ? Number(raw) : 0;
 }
 
-/* ==== Sync helpers (botones arriba + panel) ==== */
 function setActiveSegUI(seg){
   selectedSegment = seg;
   currentPrizes = PRIZES[selectedSegment];
@@ -827,8 +814,12 @@ function validateSelection(){
   subtitle.innerHTML = `Girás en <b>${seg.name}</b>. Premios se acreditan con tu próxima carga.`;
 }
 
-qSegButtons.forEach(btn=> btn.addEventListener("click", ()=> setActiveSegUI(btn.dataset.seg)));
-segButtons.forEach(btn=> btn.addEventListener("click", ()=> setActiveSegUI(btn.dataset.seg)));
+qSegButtons.forEach(btn=>{
+  btn.addEventListener("click", ()=> setActiveSegUI(btn.dataset.seg));
+});
+segButtons.forEach(btn=>{
+  btn.addEventListener("click", ()=> setActiveSegUI(btn.dataset.seg));
+});
 amountEl.addEventListener("input", validateSelection);
 
 /* ==============================
@@ -896,7 +887,7 @@ let angle=0, spinning=false, cx,cy,r, cssW=0;
 function getWrapWidth(){return Math.floor(document.querySelector(".wrap").getBoundingClientRect().width)}
 function setSize(){
   const dpr=window.devicePixelRatio||1;
-  const w=Math.min(560,Math.max(280,getWrapWidth()));
+  const w=Math.min(520,Math.max(280,getWrapWidth()));
   cssW=w;
   wheel.width=Math.floor(w*dpr); wheel.height=Math.floor(w*dpr);
   wheel.style.width=w+"px"; wheel.style.height=w+"px";
@@ -1021,7 +1012,7 @@ closeModalX.onclick=closeModal;
 modal.addEventListener("click",(e)=>{ if(e.target===modal) closeModal(); });
 
 /* ==============================
-   Countdown fin de día (solo menú)
+   Countdown fin de día
 ================================ */
 function endOfDay(){
   const n=new Date();
@@ -1034,12 +1025,9 @@ function tickCountdown(){
   const h=Math.floor(total/3600),
         m=Math.floor((total%3600)/60),
         s=total%60;
-
-  const txt = h>0 ? `${h}:${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`
-                  : `${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`;
-
-  const side = document.getElementById("countdownSide");
-  if(side) side.textContent = txt;
+  document.getElementById("countdown").textContent =
+    h>0 ? `${h}:${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`
+        : `${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`;
 }
 
 /* ==============================
